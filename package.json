@@ -1,0 +1,19 @@
+{
+  "name": "online-food-order-app",
+  "version": "1.0.0",
+  "description": "This app is use for ordering online food with location tracking and payment system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarisBukhari/Online-Food-Order-App.git"
+  },
+  "author": "Haris Bukhari",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HarisBukhari/Online-Food-Order-App/issues"
+  },
+  "homepage": "https://github.com/HarisBukhari/Online-Food-Order-App#readme"
+}
