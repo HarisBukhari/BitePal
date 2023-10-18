@@ -7,8 +7,8 @@ const app = express()
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-app.use(AdminRoute)
-app.use(VandorRoute)
+app.use("/admin",AdminRoute)
+app.use("/vandor",VandorRoute)
 
 
 
