@@ -1,6 +1,6 @@
 import express from "express"
 require('dotenv').config()
-import {AdminRoute,VandorRoute} from "./routes/index"
+import {AdminRoute,VandorRoute} from "./routes"
 
 const app = express()
 
