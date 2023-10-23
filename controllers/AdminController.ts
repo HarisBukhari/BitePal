@@ -4,9 +4,18 @@ import { CreateVendorInput } from "../dto"
 import { Vendor } from "../models"
 import { generateSalt, hashPassword } from "../utilities"
 
+
+export const findVendor = async (id: string | undefined, email?: string) => {
+    if(email) {
+        return await Vendor.findOne({ email: email})
+    }else{
+        return await Vendor.findOne({ _id: id})
+    }
+}
+
 export const CreateVendor = async (req: Request, res: Response, next: NextFunction) => {
     const { address, email, foodType, name, ownerName, password, phone, pincode } = <CreateVendorInput>req.body
-    const findOne = await Vendor.findOne({ email: email })
+    const findOne = await findVendor('',email)
     if (!findOne) {
         const bcryptSalt = await generateSalt()
         const bcryptPassword = await hashPassword(password, bcryptSalt)
@@ -44,7 +53,7 @@ export const GetVendorById = async (req: Request, res: Response, next: NextFunct
     const vendorId = req.params.id
     if (mongoose.Types.ObjectId.isValid(vendorId)) {
         // It's a valid ObjectID, proceed with the query.
-        const vendor = await Vendor.findById(vendorId);
+        const vendor = await findVendor(vendorId,'');
         if (vendor) {
             return res.json(vendor);
         }
