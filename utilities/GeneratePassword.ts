@@ -8,11 +8,11 @@ export const generateSalt = async () => {
 
 // Function to hash a password
 export const hashPassword = async (plainPassword: string, salt: string) => {
-    return bcrypt.hash(plainPassword, salt);
+    return await bcrypt.hash(plainPassword, salt);
 }
 
 // Function to verify a password
 export const verifyPassword = async (plainPassword: string, hashedPassword: string) => {
-    return bcrypt.compare(plainPassword, hashedPassword);
+    return await bcrypt.compare(plainPassword, hashedPassword);
 }
 
