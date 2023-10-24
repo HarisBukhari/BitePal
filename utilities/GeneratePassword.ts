@@ -28,9 +28,13 @@ export const generateSign = (payload: VendorPayload) => {
 export const validateSign = async (req: Request) => {
     const token = req.get('Authorization')
     if(token){
+        try{
         const payload = jwt.verify(token.split(' ')[1], AppSecret) as AuthPayload
         req.user = payload
         return true
+        }catch(err){
+            return false
+        }
     }
     return false
 }

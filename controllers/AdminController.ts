@@ -33,9 +33,9 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
             serviceAvailable: false,
             coverImage: [],
         })
-        return res.json({ "success": CreateVendor })
+        return res.status(200).json({ "success": CreateVendor })
     } else {
-        return res.json({ "Failed": "Already Exists" })
+        return res.status(204).json({ "Failed": "Already Exists" })
     }
 }
 

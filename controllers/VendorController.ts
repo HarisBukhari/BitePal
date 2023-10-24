@@ -20,7 +20,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             }
             return res.status(400).send({ message: "Please enter correct email and password" })
         }
-        return res.status(400).send({ message: "Vendor not found" })
+        return res.status(204).send({ message: "Vendor not found" })
     }
     return res.status(400).send({ message: "Please enter your email and password" })
 }
