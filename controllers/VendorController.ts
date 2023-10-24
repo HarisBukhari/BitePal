@@ -1,20 +1,36 @@
 import { Request, Response, NextFunction } from "express"
-import { VendorLogin } from "../dto"
+import { VendorLogin, VendorPayload } from "../dto"
 import { findVendor } from "../controllers"
-import { verifyPassword } from "../utilities"
+import { generateSign, verifyPassword } from "../utilities"
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <VendorLogin>req.body
-    let validPassword = false
-    if (!email || !password) {
-        res.status(201).send({ message: "Please enter your email and password" })
+    if (email && password) {
+        const user = await findVendor('', email)
+        if (user) {
+            let validPassword = await verifyPassword(password, user.password)
+            if(validPassword){
+                const sign = generateSign({
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    foodType: user.foodType
+                })
+                return res.status(200).send({token: sign})
+            }
+            return res.status(400).send({ message: "Please enter correct email and password" })
+        }
+        return res.status(400).send({ message: "Vendor not found" })
     }
-    const user = await findVendor('', email)
-    if (!user) {
-        res.status(201).send({ message: "Vendor not found" })
-    } else {
-        validPassword = await verifyPassword(password, user.password)
-    }
+    return res.status(400).send({ message: "Please enter your email and password" })
+}
 
-    res.status(200).send({ validPassword: validPassword })
+export const getVendor = async (req: Request, res: Response, next: NextFunction) => {
+
+}
+export const updateVendor = async (req: Request, res: Response, next: NextFunction) => {
+
+}
+export const updateVendorService = async (req: Request, res: Response, next: NextFunction) => {
+
 }

@@ -7,5 +7,8 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 })
 
 router.post('/login', login)
+router.get('/vendor', login)
+router.patch('/vendor', login)
+router.patch('/vendorService', login)
 
 export { router as VendorRoute }

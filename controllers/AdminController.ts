@@ -42,9 +42,9 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
 export const GetVendors = async (req: Request, res: Response, next: NextFunction) => {
     const allVendors = await Vendor.find()
     if (allVendors.length > 0) {
-        return res.json(allVendors);
+        return res.status(200).json(allVendors)
     } else {
-        return res.json({ success: "No Vendor Found" });
+        return res.status(204).json({ success: "No Vendor Found" })
     }
 
 }
@@ -53,14 +53,14 @@ export const GetVendorById = async (req: Request, res: Response, next: NextFunct
     const vendorId = req.params.id
     if (mongoose.Types.ObjectId.isValid(vendorId)) {
         // It's a valid ObjectID, proceed with the query.
-        const vendor = await findVendor(vendorId,'');
+        const vendor = await findVendor(vendorId,'')
         if (vendor) {
-            return res.json(vendor);
+            return res.status(200).json(vendor)
         }
-        return res.json({ Failed: 'Vendor not Found' });
+        return res.status(204).json({ Failed: 'Vendor not Found' })
     } else {
         // It's not a valid ObjectID, return an error response.
-        return res.status(400).json({ Error: 'Invalid vendor ID' });
+        return res.status(403).json({ Error: 'Invalid vendor ID' })
     }
 }
 
