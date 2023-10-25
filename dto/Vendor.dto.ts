@@ -9,6 +9,13 @@ export interface CreateVendorInput {
     password: string;
 }
 
+export interface UpdateVendor {
+    name: string;
+    address: string;
+    phone: string;
+    foodType: [string];
+}
+
 export interface VendorLogin {
     email: string;
     password: string;

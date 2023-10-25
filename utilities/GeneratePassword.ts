@@ -22,17 +22,17 @@ export const verifyPassword = async (plainPassword: string, hashedPassword: stri
 }
 
 export const generateSign = (payload: VendorPayload) => {
-    return jwt.sign(payload, AppSecret,{expiresIn: '7d'})
+    return jwt.sign(payload, AppSecret, { expiresIn: '7d' })
 }
 
 export const validateSign = async (req: Request) => {
     const token = req.get('Authorization')
-    if(token){
-        try{
-        const payload = jwt.verify(token.split(' ')[1], AppSecret) as AuthPayload
-        req.user = payload
-        return true
-        }catch(err){
+    if (token) {
+        try {
+            const payload = jwt.verify(token.split(' ')[1], AppSecret) as AuthPayload
+            req.User = payload
+            return true
+        } catch (err) {
             return false
         }
     }
