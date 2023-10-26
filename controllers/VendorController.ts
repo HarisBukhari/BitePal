@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express"
-import { UpdateVendor, VendorLogin, VendorPayload } from "../dto"
+import { UpdateVendor, VendorLogin, CreateFoodInput } from "../dto"
 import { findVendor } from "../controllers"
 import { generateSign, verifyPassword } from "../utilities"
-import { Vendor } from "../models"
+import { Food } from "../models/food"
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <VendorLogin>req.body
@@ -86,5 +86,64 @@ export const updateService = async (req: Request, res: Response, next: NextFunct
 }
 
 export const updateVendorService = async (req: Request, res: Response, next: NextFunction) => {
+
+}
+
+export const addFood = async (req: Request, res: Response, next: NextFunction) => {
+    const vendor = req.User
+    if (vendor) {
+        const vendorProfile = await (findVendor(vendor._id, ""))
+        if (vendorProfile) {
+            //Here
+            const { name, category, description, foodType, price, readyTime } = <CreateFoodInput>req.body
+            try {
+                const files = req.files as [Express.Multer.File]
+                const images = files.map((file: Express.Multer.File)=> file.filename)
+                const food = await Food.create({
+                    vendorId: vendorProfile._id,
+                    name: name,
+                    category: category,
+                    description: description,
+                    foodType: foodType,
+                    price: price,
+                    readyTime: readyTime,
+                    rating: 0,
+                    image: images
+                })
+                vendorProfile.foods.push(food)
+                await vendorProfile.save()
+                return res.status(201).json({ "success": vendorProfile })
+            } catch (error) {
+                console.error('Database error:', error);
+                res.status(500).json({ message: 'Internal server error' });
+            }
+        } else {
+            res.status(404).json({ message: "Something went wrong" })
+        }
+    } else {
+        res.status(404).json({ message: "Something went wrong" })
+    }
+}
+
+export const getFoods = async (req: Request, res: Response, next: NextFunction) => {
+    const vendor = req.User
+    if (vendor) {
+        const vendorProfile = await (findVendor(vendor._id, ""))
+        if (vendorProfile) {
+            try {
+                const foods = await Food.find({ vendorId: vendorProfile.id })
+                if (foods.length > 0) {
+                    res.status(200).json(foods)
+                } else {
+                    res.status(404).json({ message: '404 what else you can expect' });
+                }
+            } catch (err) {
+                console.error('Database error:', err);
+                res.status(500).json({ message: 'Internal server error' });
+            }
+        } else {
+            res.status(404).json({ message: "Something went wrong" })
+        }
+    }
 
 }

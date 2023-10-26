@@ -20,27 +20,32 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
         if (!findOne) {
             const bcryptSalt = await generateSalt()
             const bcryptPassword = await hashPassword(password, bcryptSalt)
-            const CreateVendor = await Vendor.create({
-                name: name,
-                email: email,
-                address: address,
-                foodType: foodType,
-                ownerName: ownerName,
-                password: bcryptPassword,
-                phone: phone,
-                pincode: pincode,
-                salt: bcryptSalt,
-                rating: 0,
-                serviceAvailable: false,
-                coverImage: [],
-            })
-            return res.status(201).json({ "success": CreateVendor })
+            try {
+                const CreateVendor = await Vendor.create({
+                    name: name,
+                    email: email,
+                    address: address,
+                    foodType: foodType,
+                    ownerName: ownerName,
+                    password: bcryptPassword,
+                    phone: phone,
+                    pincode: pincode,
+                    salt: bcryptSalt,
+                    rating: 0,
+                    serviceAvailable: false,
+                    coverImage: [],
+                })
+                return res.status(201).json({ "success": CreateVendor })
+            } catch (err) { 
+                console.error('Database error:', err)
+                res.status(500).json({ message: 'Internal server error' })
+            }
         } else {
             return res.status(403).json({ "Failed": "Already Exists" })
         }
     } catch (err) {
-        console.error('Database error:', err);
-        res.status(500).json({ message: 'Internal server error' });
+        console.error('Database error:', err)
+        res.status(500).json({ message: 'Internal server error' })
     }
 }
 
