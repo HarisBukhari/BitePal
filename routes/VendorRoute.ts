@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from "express"
-import { login, getVendor, updateVendor, updateService, updateVendorService, addFood, getFoods } from "../controllers"
+import { login, getVendor, updateVendor, updateVendorImage, updateVendorService, addFood, getFoods } from "../controllers"
 import { Authenticate } from "../middlewares"
 import multer from "multer"
 
@@ -33,11 +33,11 @@ router.use(Authenticate)
 //Vendor
 router.get('/profile', getVendor)
 router.patch('/update', updateVendor)
-router.patch('/update/service', updateService)
-router.patch('/vendorService', login)
+router.patch('/update/service', updateVendorService)
+router.patch('/update/coverImage', images, updateVendorImage)
 
 //Food
-router.post('/food',images, addFood)
+router.post('/food', images, addFood)
 router.get('/food', getFoods)
 
 export { router as VendorRoute }

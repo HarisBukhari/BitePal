@@ -4,6 +4,8 @@ import { findVendor } from "../controllers"
 import { generateSign, verifyPassword } from "../utilities"
 import { Food } from "../models/food"
 
+//Vendor Controller
+
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <VendorLogin>req.body
     if (email && password) {
@@ -64,7 +66,7 @@ export const updateVendor = async (req: Request, res: Response, next: NextFuncti
     }
 }
 
-export const updateService = async (req: Request, res: Response, next: NextFunction) => {
+export const updateVendorService = async (req: Request, res: Response, next: NextFunction) => {
     const vendor = req.User
     if (vendor) {
         const vendorProfile = await (findVendor(vendor._id, ""))
@@ -85,9 +87,32 @@ export const updateService = async (req: Request, res: Response, next: NextFunct
     }
 }
 
-export const updateVendorService = async (req: Request, res: Response, next: NextFunction) => {
-
+export const updateVendorImage = async (req: Request, res: Response, next: NextFunction) => {
+    const vendor = req.User
+    if (vendor) {
+        const vendorProfile = await (findVendor(vendor._id, ""))
+        if (vendorProfile) {
+            //Here
+            try {
+                const files = req.files as [Express.Multer.File]
+                const images = files.map((file: Express.Multer.File)=> file.filename)
+                vendorProfile.coverImage.push(...images)
+                await vendorProfile.save()
+                return res.status(201).json({ "success": vendorProfile })
+            } catch (error) {
+                console.error('Database error:', error);
+                res.status(500).json({ message: 'Internal server error' });
+            }
+        } else {
+            res.status(404).json({ message: "Something went wrong" })
+        }
+    } else {
+        res.status(404).json({ message: "Something went wrong" })
+    }
 }
+
+
+//Food Controller
 
 export const addFood = async (req: Request, res: Response, next: NextFunction) => {
     const vendor = req.User
