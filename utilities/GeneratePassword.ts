@@ -33,6 +33,7 @@ export const validateSign = async (req: Request) => {
             req.User = payload
             return true
         } catch (err) {
+            console.log("utility error")
             return false
         }
     }
