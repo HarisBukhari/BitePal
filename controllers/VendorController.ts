@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { UpdateVendor, VendorLogin, CreateFoodInput } from "../dto"
 import { findVendor } from "../controllers"
 import { generateSign, verifyPassword } from "../utilities"
-import { Food } from "../models/food"
+import { Food } from "../models"
 
 //Vendor Controller
 
