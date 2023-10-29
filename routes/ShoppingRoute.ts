@@ -1,6 +1,5 @@
 import express, { Request, Response, NextFunction } from "express"
-import { login, getVendor, updateVendor, updateVendorImage, updateVendorService, addFood, getFoods } from "../controllers"
-import { hello } from "../controllers"
+import { GetFoodAvailability, GetTopRestaurants, GetFoodIn30Min, SearchFoods, RestuarantsByID, getFoods } from "../controllers"
 import { Authenticate } from "../middlewares"
 
 const router = express.Router()
@@ -17,10 +16,10 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
 // router.use(Authenticate)
 
 //Vendor
-router.get('/:pincode', hello)
-router.get('/top-restaurants/:pincode', hello)
-router.get('/foods-in-30-min/:pincode', hello)
-router.get('/search/:pincode', hello)
-router.get('/restaurant/:id', hello)
+router.get('/:pincode',GetFoodAvailability)
+router.get('/top-restaurants/:pincode', GetTopRestaurants)
+router.get('/foods-in-30-min/:pincode', GetFoodIn30Min)
+router.get('/search/:pincode', SearchFoods)
+router.get('/restaurant/:id', RestuarantsByID)
 
 export { router as ShoppingRoute }
