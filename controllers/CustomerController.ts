@@ -29,5 +29,3 @@ export const UpdateCutomerProfile = async (req: Request, res: Response, next: Ne
     
 }
 
-
-
