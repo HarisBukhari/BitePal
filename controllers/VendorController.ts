@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { UpdateVendor, VendorLogin, CreateFoodInput } from "../dto"
 import { findVendor } from "../controllers"
 import { generateSign, verifyPassword } from "../utilities"
-import { Food } from "../models"
+import { Food } from "../models/food"
 
 //Vendor Controller
 
@@ -30,6 +30,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 export const getVendor = async (req: Request, res: Response, next: NextFunction) => {
     const vendor = req.User
+    console.log(vendor)
     if (vendor) {
         const vendorProfile = await (findVendor(vendor._id, ""))
         if (vendorProfile) {

@@ -12,3 +12,14 @@ export class CreateCustomerInputs {
     password: string;
 
 }
+
+export interface CustomerPayload {
+    _id: string;
+    email: string;
+    phone: string;
+}
+
+export interface CustomersLogin {
+    email: string;
+    password: string;
+}

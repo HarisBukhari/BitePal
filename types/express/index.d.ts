@@ -1,4 +1,4 @@
-import { AuthPayload } from "../../dto";
+import { AuthPayload, CAuthPayload } from "../../dto";
 
 
 declare global {

@@ -21,7 +21,7 @@ export const verifyPassword = async (plainPassword: string, hashedPassword: stri
     return await bcrypt.compare(plainPassword, hashedPassword);
 }
 
-export const generateSign = (payload: VendorPayload) => {
+export const generateSign = (payload: AuthPayload ) => {
     return jwt.sign(payload, AppSecret, { expiresIn: '7d' })
 }
 
@@ -29,7 +29,7 @@ export const validateSign = async (req: Request) => {
     const token = req.get('Authorization')
     if (token) {
         try {
-            const payload = jwt.verify(token.split(' ')[1], AppSecret) as AuthPayload
+            const payload = jwt.verify(token.split(' ')[1], AppSecret) as AuthPayload 
             req.User = payload
             return true
         } catch (err) {
