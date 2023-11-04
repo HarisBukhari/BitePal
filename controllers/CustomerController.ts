@@ -9,8 +9,16 @@ import { CreateCustomerInputs } from "../dto/Customer.dto"
 
 
 export const CustomerSignUp = async (req: Request, res: Response, next: NextFunction) => {
+
     const customerInputs = plainToClass(CreateCustomerInputs, req.body)
-    const inputErrors = await validate(customerInputs, {validationError: {target:true}})
+    const inputErrors = await validate(customerInputs, { validationError: { target: true } })
+    if (inputErrors.length > 0) {
+        return res.status(400).json(inputErrors)
+    }
+
+    const { email, password, phone } = customerInputs
+    
+
 }
 
 export const CustomerLogin = async (req: Request, res: Response, next: NextFunction) => {
