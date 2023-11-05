@@ -11,11 +11,15 @@ export const generateOtop = () => {
 }
 
 export const requestOtp = async (otp: number, to: String) => {
-    const client  = require('twilio')(T_ID,T_Token)
-    const response = await client.messages.create({
-        body: `Farig Yeah Lai Apni OTP ${otp}`,
-        from: '+12394490950',
-        to: `+92${to}`
-    })
-    return response
+    try {
+        const client = require('twilio')(T_ID, T_Token)
+        const response = await client.messages.create({
+            body: `Farig Yeah Lai Apni OTP ${otp}`,
+            from: '+12394490950',
+            to: `+92${to}`
+        })
+        return response
+    } catch (err) {
+        console.log(err)
+    }
 }

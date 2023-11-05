@@ -67,7 +67,6 @@ export const CustomerLogin = async (req: Request, res: Response, next: NextFunct
     const { email, password } = <CustomersLogin>req.body
     if (email && password) {
         const user = await findCustomer('', email)
-        console.log(user)
         if (user) {
             let validPassword = await verifyPassword(password, user.password)
             if (validPassword) {
@@ -87,21 +86,27 @@ export const CustomerLogin = async (req: Request, res: Response, next: NextFunct
 
 export const CustomerVerify = async (req: Request, res: Response, next: NextFunction) => {
     const customer = req.User
-    console.log(customer)
+    const { otp } = req.body
     if (customer) {
         const customerProfile = await (findCustomer(customer._id, ""))
         if (customerProfile) {
-            res.status(200).json(customerProfile)
+            if (customerProfile.otp == otp) {
+                customerProfile.verified = true
+                await customerProfile.save()
+                res.status(200).json(customerProfile)
+            } else {
+                res.status(404).json({ message: "Otp Failed!" })
+            }
         } else {
             res.status(404).json({ message: "Something went wrong!" })
         }
     } else {
         res.status(404).json({ message: "Something went wrong" })
     }
-
 }
 
 export const OTP = async (req: Request, res: Response, next: NextFunction) => {
+
 
 }
 
@@ -110,6 +115,17 @@ export const CustomerProfile = async (req: Request, res: Response, next: NextFun
 }
 
 export const UpdateCutomerProfile = async (req: Request, res: Response, next: NextFunction) => {
-
+    const customer = req.User
+    const { otp } = req.body
+    if (customer) {
+        const customerProfile = await (findCustomer(customer._id, ""))
+        if (customerProfile) {
+            
+        } else {
+            res.status(404).json({ message: "Something went wrong!" })
+        }
+    } else {
+        res.status(404).json({ message: "Something went wrong" })
+    }
 }
 
