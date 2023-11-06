@@ -116,11 +116,20 @@ export const CustomerProfile = async (req: Request, res: Response, next: NextFun
 
 export const UpdateCutomerProfile = async (req: Request, res: Response, next: NextFunction) => {
     const customer = req.User
-    const { otp } = req.body
+    const { firstName, lastName, address } = req.body
     if (customer) {
         const customerProfile = await (findCustomer(customer._id, ""))
         if (customerProfile) {
-            
+            customerProfile.firstName = firstName
+            customerProfile.lastName = lastName
+            customerProfile.address = address
+            try {
+                await customerProfile.save()
+                res.status(200).json(customerProfile)
+            } catch (error) {
+                console.error('Database error:', error);
+                res.status(500).json({ message: 'Internal server error' });
+            }
         } else {
             res.status(404).json({ message: "Something went wrong!" })
         }
