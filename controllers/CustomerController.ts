@@ -3,7 +3,7 @@ import { Customer } from "../models"
 import { generateOtop, generateSalt, generateSign, hashPassword, requestOtp, verifyPassword } from "../utilities"
 import { plainToClass } from "class-transformer"
 import { validate } from "class-validator"
-import { CreateCustomerInputs, CustomersLogin } from "../dto"
+import { CreateCustomerInputs, CustomersLogin, EditCustomerInputs } from "../dto"
 
 
 export const findCustomer = async (id: string | undefined, email?: string) => {
@@ -47,7 +47,7 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
         const signature = generateSign({
             _id: customer._id,
             email: customer.email,
-            phone: customer.phone,
+            verified: customer.phone,
         })
 
         res.status(201).json(({
@@ -64,7 +64,12 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
 }
 
 export const CustomerLogin = async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = <CustomersLogin>req.body
+    const customerInputs = plainToClass(CustomersLogin, req.body)
+    const inputErrors = await validate(customerInputs, { validationError: { target: true } })
+    if (inputErrors.length > 0) {
+        return res.status(400).json(inputErrors)
+    }
+    const { email, password } = customerInputs
     if (email && password) {
         const user = await findCustomer('', email)
         if (user) {
@@ -73,7 +78,7 @@ export const CustomerLogin = async (req: Request, res: Response, next: NextFunct
                 const sign = generateSign({
                     _id: user._id,
                     email: user.email,
-                    phone: user.phone,
+                    verified: user.phone,
                 })
                 return res.status(200).send({ token: sign })
             }
@@ -111,12 +116,27 @@ export const OTP = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 export const CustomerProfile = async (req: Request, res: Response, next: NextFunction) => {
-
+    const customer = req.User
+    if (customer) {
+        const customerProfile = await (findCustomer(customer._id, ""))
+        if (customerProfile) {
+            res.status(200).json(customerProfile)
+        } else {
+            res.status(404).json({ message: "Something went wrong!" })
+        }
+    } else {
+        res.status(404).json({ message: "Something went wrong" })
+    }
 }
 
 export const UpdateCutomerProfile = async (req: Request, res: Response, next: NextFunction) => {
+    const customerInputs = plainToClass(EditCustomerInputs, req.body)
+    const inputErrors = await validate(customerInputs, { validationError: { target: true } })
+    if (inputErrors.length > 0) {
+        return res.status(400).json(inputErrors)
+    }
     const customer = req.User
-    const { firstName, lastName, address } = req.body
+    const { firstName, lastName, address } = customerInputs
     if (customer) {
         const customerProfile = await (findCustomer(customer._id, ""))
         if (customerProfile) {

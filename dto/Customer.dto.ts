@@ -13,13 +13,29 @@ export class CreateCustomerInputs {
 
 }
 
+export class EditCustomerInputs {
+
+    @Length(3, 16)
+    firstName: string;
+
+    @Length(3, 16)
+    lastName: string;
+
+    @Length(6, 16)
+    address: string;
+
+}
+
 export interface CustomerPayload {
     _id: string;
     email: string;
-    phone: string;
+    verified: string;
 }
 
-export interface CustomersLogin {
+export class CustomersLogin {
+    @IsEmail()
     email: string;
+
+    @Length(7, 12)
     password: string;
 }
