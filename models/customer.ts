@@ -20,7 +20,7 @@ const CustomerSchema = new Schema({
     lastName: { type: String },
     email: { type: String, required: true },
     password: { type: String, required: true },
-    addresses: { type: String },
+    address: { type: String },
     phone: { type: String, required: true },
     salt: { type: String, required: true },
     verified: { type: Boolean, required: true },
