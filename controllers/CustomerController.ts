@@ -59,8 +59,6 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
     } else {
         res.status(400).json({ err: "Something went wrong" })
     }
-
-
 }
 
 export const CustomerLogin = async (req: Request, res: Response, next: NextFunction) => {
@@ -157,4 +155,3 @@ export const UpdateCutomerProfile = async (req: Request, res: Response, next: Ne
         res.status(404).json({ message: "Something went wrong" })
     }
 }
-
