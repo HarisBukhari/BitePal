@@ -14,7 +14,6 @@ export const findCustomer = async (id: string | undefined, email?: string) => {
     }
 }
 
-
 export const CustomerSignUp = async (req: Request, res: Response, next: NextFunction) => {
 
     const customerInputs = plainToClass(CreateCustomerInputs, req.body)
