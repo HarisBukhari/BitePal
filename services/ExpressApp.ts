@@ -14,6 +14,3 @@ export default async (app: Application) => {
     app.use("/customer", CustomerRoute)
     return app
 }
-
-
-
