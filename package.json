@@ -1,44 +1,39 @@
 {
-  "name": "online-food-order-app",
+  "name": "food_order_backend",
   "version": "1.0.0",
-  "description": "This app is use for ordering online food with location tracking and payment system",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon source/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc -p .",
+    "postinstall": "npm run build"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/HarisBukhari/Online-Food-Order-App.git"
+  "engines": {
+    "node": "14.15.2",
+    "npm": "6.14.9"
   },
-  "author": "Haris Bukhari",
+  "author": "Jayant Gogoi",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/HarisBukhari/Online-Food-Order-App/issues"
-  },
-  "homepage": "https://github.com/HarisBukhari/Online-Food-Order-App#readme",
   "dependencies": {
-    "@types/cors": "^2.8.14",
-    "@types/mongoose": "^5.11.97",
-    "bcrypt": "^5.1.1",
-    "body-parser": "^1.20.2",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0",
+    "bcrypt": "^5.0.0",
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^7.6.3",
-    "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.0.1",
-    "ts-node-dev": "^2.0.0",
-    "twilio": "^4.19.0",
-    "typescript": "^5.2.2"
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.13",
+    "multer": "^1.4.2",
+    "twilio": "^3.66.0"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.1",
-    "@types/express": "^4.17.20",
-    "@types/jsonwebtoken": "^9.0.4",
-    "@types/multer": "^1.4.9"
+    "nodemon": "^2.0.6",
+    "ts-node-dev": "^1.0.0",
+    "typescript": "^4.0.5",
+    "@types/bcrypt": "^3.0.0",
+    "@types/cors": "^2.8.8",
+    "@types/express": "^4.17.8",
+    "@types/jsonwebtoken": "^8.5.4",
+    "@types/multer": "^1.4.7"
   }
 }
