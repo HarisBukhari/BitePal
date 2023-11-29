@@ -36,12 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateCutomerProfile = exports.CustomerProfile = exports.OTP = exports.CustomerVerify = exports.CustomerLogin = exports.CustomerSignUp = exports.findCustomer = void 0;
+exports.GetOrderById = exports.GetOrders = exports.CreateOrder = exports.UpdateCutomerProfile = exports.CustomerProfile = exports.OTP = exports.CustomerVerify = exports.CustomerLogin = exports.CustomerSignUp = exports.findCustomer = void 0;
 var models_1 = require("../models");
 var utilities_1 = require("../utilities");
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
 var dto_1 = require("../dto");
+var order_1 = require("../models/order");
 var findCustomer = function (id, email) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -264,4 +265,106 @@ var UpdateCutomerProfile = function (req, res, next) { return __awaiter(void 0, 
     });
 }); };
 exports.UpdateCutomerProfile = UpdateCutomerProfile;
+/* ------------------- Order Section --------------------- */
+// const validateTransaction = async(txnId: string) => {
+//     const currentTransaction = await Transaction.findById(txnId)
+//     if(currentTransaction){
+//         if(currentTransaction.status.toLowerCase() !== 'failed'){
+//             return {status: true, currentTransaction}
+//         }
+//     }
+//     return {status: false, currentTransaction}
+// }
+var CreateOrder = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var customer, _a, txnId, amount, items, profile, orderId, cart_1, cartItems_1, netAmount_1, vendorId_1, foods, currentOrder, profileResponse;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                customer = req.User;
+                _a = req.body, txnId = _a.txnId, amount = _a.amount, items = _a.items;
+                if (!customer) return [3 /*break*/, 5];
+                return [4 /*yield*/, models_1.Customer.findById(customer._id)];
+            case 1:
+                profile = _b.sent();
+                orderId = "".concat(Math.floor(Math.random() * 89999) + 1000);
+                cart_1 = req.body;
+                cartItems_1 = Array();
+                netAmount_1 = 0.0;
+                return [4 /*yield*/, models_1.Food.find().where('_id').in(cart_1.map(function (item) { return item._id; })).exec()];
+            case 2:
+                foods = _b.sent();
+                foods.map(function (food) {
+                    cart_1.map(function (_a) {
+                        var _id = _a._id, unit = _a.unit;
+                        if (food._id == _id) {
+                            vendorId_1 = food.vendorId;
+                            netAmount_1 += (food.price * unit);
+                            cartItems_1.push({ food: food, unit: unit });
+                        }
+                    });
+                });
+                if (!cartItems_1) return [3 /*break*/, 5];
+                return [4 /*yield*/, order_1.Order.create({
+                        orderId: orderId,
+                        vendorId: vendorId_1,
+                        items: cartItems_1,
+                        totalAmount: netAmount_1,
+                        paidAmount: amount,
+                        orderDate: new Date(),
+                        orderStatus: 'Waiting',
+                        remarks: '',
+                        deliveryId: '',
+                        readyTime: 45
+                    })];
+            case 3:
+                currentOrder = _b.sent();
+                profile.cart = [];
+                profile.orders.push(currentOrder);
+                return [4 /*yield*/, profile.save()];
+            case 4:
+                profileResponse = _b.sent();
+                return [2 /*return*/, res.status(200).json(profileResponse)];
+            case 5: return [2 /*return*/, res.status(400).json({ msg: 'Error while Creating Order' })];
+        }
+    });
+}); };
+exports.CreateOrder = CreateOrder;
+var GetOrders = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var customer, profile;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                customer = req.User;
+                if (!customer) return [3 /*break*/, 2];
+                return [4 /*yield*/, models_1.Customer.findById(customer._id).populate("orders")];
+            case 1:
+                profile = _a.sent();
+                if (profile) {
+                    return [2 /*return*/, res.status(200).json(profile.orders)];
+                }
+                _a.label = 2;
+            case 2: return [2 /*return*/, res.status(400).json({ msg: 'Orders not found' })];
+        }
+    });
+}); };
+exports.GetOrders = GetOrders;
+var GetOrderById = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var orderId, order;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                orderId = req.params.id;
+                if (!orderId) return [3 /*break*/, 2];
+                return [4 /*yield*/, models_1.Customer.findById(orderId).populate("items.food")];
+            case 1:
+                order = _a.sent();
+                if (order) {
+                    return [2 /*return*/, res.status(200).json(order)];
+                }
+                _a.label = 2;
+            case 2: return [2 /*return*/, res.status(400).json({ msg: 'Order not found' })];
+        }
+    });
+}); };
+exports.GetOrderById = GetOrderById;
 //# sourceMappingURL=CustomerController.js.map

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomersLogin = exports.EditCustomerInputs = exports.CreateCustomerInputs = void 0;
+exports.OrderInputs = exports.CartItem = exports.CustomersLogin = exports.EditCustomerInputs = exports.CreateCustomerInputs = void 0;
 var class_validator_1 = require("class-validator");
 var CreateCustomerInputs = /** @class */ (function () {
     function CreateCustomerInputs() {
@@ -61,4 +61,16 @@ var CustomersLogin = /** @class */ (function () {
     return CustomersLogin;
 }());
 exports.CustomersLogin = CustomersLogin;
+var CartItem = /** @class */ (function () {
+    function CartItem() {
+    }
+    return CartItem;
+}());
+exports.CartItem = CartItem;
+var OrderInputs = /** @class */ (function () {
+    function OrderInputs() {
+    }
+    return OrderInputs;
+}());
+exports.OrderInputs = OrderInputs;
 //# sourceMappingURL=Customer.dto.js.map
