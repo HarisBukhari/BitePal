@@ -1,2 +1,2 @@
 export * from "./GeneratePassword"
-export * from "./notificationUtility"
+export * from "./NotificationUtility"
