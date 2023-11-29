@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express"
-import { Customer } from "../models"
+import { Customer, Food } from "../models"
 import { generateOtop, generateSalt, generateSign, hashPassword, requestOtp, verifyPassword } from "../utilities"
 import { plainToClass } from "class-transformer"
 import { validate } from "class-validator"
-import { CreateCustomerInputs, CustomersLogin, EditCustomerInputs } from "../dto"
+import { CartItem, CreateCustomerInputs, CustomersLogin, EditCustomerInputs, OrderInputs } from "../dto"
+import { Order } from "../models/order"
 
 
 export const findCustomer = async (id: string | undefined, email?: string) => {
@@ -153,4 +154,136 @@ export const UpdateCutomerProfile = async (req: Request, res: Response, next: Ne
     } else {
         res.status(404).json({ message: "Something went wrong" })
     }
+}
+
+/* ------------------- Order Section --------------------- */
+
+// const validateTransaction = async(txnId: string) => {
+    
+//     const currentTransaction = await Transaction.findById(txnId);
+
+//     if(currentTransaction){
+//         if(currentTransaction.status.toLowerCase() !== 'failed'){
+//             return {status: true, currentTransaction};
+//         }
+//     }
+//     return {status: false, currentTransaction};
+// }
+
+
+
+export const CreateOrder = async (req: Request, res: Response, next: NextFunction) => {
+
+
+    const customer = req.User;
+
+     const { txnId, amount, items } = <OrderInputs>req.body;
+
+    
+    if(customer){
+
+        // const { status, currentTransaction } =  await validateTransaction(txnId);
+
+        // if(!status){
+        //     return res.status(404).json({ message: 'Error while Creating Order!'})
+        // }
+
+        const profile = await Customer.findById(customer._id);
+
+
+        const orderId = `${Math.floor(Math.random() * 89999)+ 1000}`;
+
+        const cart = <[CartItem]>req.body;
+
+        let cartItems = Array();
+
+        let netAmount = 0.0;
+
+        let vendorId;
+
+        const foods = await Food.find().where('_id').in(cart.map(item => item._id)).exec();
+
+        foods.map(food => {
+            cart.map(({ _id, unit}) => {
+                if(food._id == _id){
+                    vendorId = food.vendorId;
+                    netAmount += (food.price * unit);
+                    cartItems.push({ food, unit})
+                }
+            })
+        })
+
+        if(cartItems){
+
+            const currentOrder = await Order.create({
+                orderId: orderId,
+                vendorId: vendorId,
+                items: cartItems,
+                totalAmount: netAmount,
+                paidAmount: amount,
+                orderDate: new Date(),
+                orderStatus: 'Waiting',
+                remarks: '',
+                deliveryId: '',
+                readyTime: 45
+            })
+
+            profile.cart = [] as any;
+            profile.orders.push(currentOrder);
+ 
+
+            // currentTransaction.vendorId = vendorId;
+            // currentTransaction.orderId = orderId;
+            // currentTransaction.status = 'CONFIRMED'
+            
+            // await currentTransaction.save();
+
+            // await assignOrderForDelivery(currentOrder._id, vendorId);
+
+            const profileResponse =  await profile.save();
+
+            return res.status(200).json(profileResponse);
+
+        }
+
+    }
+
+    return res.status(400).json({ msg: 'Error while Creating Order'});
+}
+
+export const GetOrders = async (req: Request, res: Response, next: NextFunction) => {
+
+    const customer = req.User;
+    
+    if(customer){
+
+ 
+        const profile = await Customer.findById(customer._id).populate("orders");
+        if(profile){
+            return res.status(200).json(profile.orders);
+        }
+
+    }
+
+    return res.status(400).json({ msg: 'Orders not found'});
+}
+
+
+export const GetOrderById = async (req: Request, res: Response, next: NextFunction) => {
+
+    const orderId = req.params.id;
+    
+    
+    if(orderId){
+
+ 
+        const order = await Customer.findById(orderId).populate("items.food");
+        
+        if(order){
+            return res.status(200).json(order);
+        }
+
+    }
+
+    return res.status(400).json({ msg: 'Order not found'});
 }

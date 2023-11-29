@@ -1,8 +1,7 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 
 export interface OrderDoc extends Document {
-
     orderId: string;
     vendorId: string;
     items: [any];
@@ -32,7 +31,6 @@ const OrderSchema = new Schema({
     remarks: {type: String},
     deliveryId: {type: String},
     readyTime:{type: Number},
-     
 },{
     toJSON: {
         transform(doc, ret){

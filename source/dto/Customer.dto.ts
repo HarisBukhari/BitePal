@@ -39,3 +39,16 @@ export class CustomersLogin {
     @Length(7, 12)
     password: string;
 }
+
+
+export class CartItem {
+    _id: string;
+    unit: number;
+}
+
+
+export class OrderInputs {
+    txnId: string;
+    amount: string;
+    items: [CartItem];
+}
