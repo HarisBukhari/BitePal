@@ -52,7 +52,7 @@ var StartServer = function () { return __awaiter(void 0, void 0, void 0, functio
                 return [4 /*yield*/, (0, ExpressApp_1.default)(app)];
             case 1:
                 _a.sent();
-                app.listen(process.env.PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
+                app.listen(process.env.PORT || 3000, function () { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: 
@@ -61,7 +61,7 @@ var StartServer = function () { return __awaiter(void 0, void 0, void 0, functio
                             case 1:
                                 // console.clear()
                                 _a.sent();
-                                console.log("Server is running on port ".concat(process.env.PORT));
+                                console.log("Server is running on port ".concat(process.env.PORT || 3000));
                                 return [2 /*return*/];
                         }
                     });
