@@ -244,7 +244,6 @@ var addFood = function (req, res, next) { return __awaiter(void 0, void 0, void 
                         price: price,
                         readyTime: readyTime,
                         rating: 0,
-                        //Image: images
                         image: images
                     })];
             case 3:

@@ -8,7 +8,7 @@ const router = express.Router()
 //Multer
 const imageStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'images')
+        cb(null, 'dist/images')
     },
     filename: function (req, file, cb) {
         //Error 2 

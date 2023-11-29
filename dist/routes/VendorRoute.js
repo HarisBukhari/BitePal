@@ -13,7 +13,7 @@ exports.VendorRoute = router;
 //Multer
 var imageStorage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'images');
+        cb(null, 'dist/images');
     },
     filename: function (req, file, cb) {
         //Error 2 
