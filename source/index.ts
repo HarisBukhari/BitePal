@@ -6,10 +6,10 @@ import dbConnection from './services/Database'
 const StartServer = async () => {
     const app = express()
     await App(app)
-    app.listen(process.env.PORT, async () => {
+    app.listen(process.env.PORT||3000, async () => {
         // console.clear()
         await dbConnection()
-        console.log(`Server is running on port ${process.env.PORT}`)
+        console.log(`Server is running on port ${process.env.PORT||3000}`)
     })
 }
 
