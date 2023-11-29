@@ -41,12 +41,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var routes_1 = require("../routes");
-var body_parser_1 = __importDefault(require("body-parser"));
 var path_1 = __importDefault(require("path"));
 exports.default = (function (app) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        app.use(body_parser_1.default.json());
-        app.use(body_parser_1.default.urlencoded({ extended: true }));
+        app.use(express_1.default.json());
+        app.use(express_1.default.urlencoded({ extended: true }));
         app.use('/images', express_1.default.static(path_1.default.join(__dirname, '/images')));
         app.use("/admin", routes_1.AdminRoute);
         app.use("/vendor", routes_1.VendorRoute);
