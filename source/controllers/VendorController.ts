@@ -134,7 +134,6 @@ export const addFood = async (req: Request, res: Response, next: NextFunction) =
                     price: price,
                     readyTime: readyTime,
                     rating: 0,
-                    //Image: images
                     image: images
                 })
                 vendorProfile.foods.push(food)
