@@ -14,5 +14,4 @@ const fun = async () => {
     console.log(await verifyPassword(password,genPassword))
 }
 
-
 fun()
