@@ -250,7 +250,7 @@ export const GetOrderById = async (req: Request, res: Response, next: NextFuncti
     try {
         const orderId = req.params.id
         if (orderId) {
-            const order = await Customer.findById(orderId).populate("items.food")
+            const order = await Order.findById(orderId).populate("items.food")
             if (order) {
                 return res.status(200).json(order)
             }

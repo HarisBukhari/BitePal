@@ -168,7 +168,7 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
                 res.status(500).json({ message: 'Internal server error' });
             }
         } else {
-            res.status(404).json({ message: "Something went wrong" })
+            res.status(404).json({ message: "! Something went wrong" })
         }
     }
 
