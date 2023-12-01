@@ -24,8 +24,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Food = void 0;
-var mongoose_1 = __importStar(require("mongoose"));
-var foodSchema = new mongoose_1.Schema({
+const mongoose_1 = __importStar(require("mongoose"));
+const foodSchema = new mongoose_1.Schema({
     vendorId: { type: String, required: true },
     name: { type: String, required: true },
     description: { type: String, required: true },
@@ -37,7 +37,7 @@ var foodSchema = new mongoose_1.Schema({
     image: { type: [String] }
 }, {
     toJSON: {
-        transform: function (doc, ret) {
+        transform(doc, ret) {
             delete ret.__v;
             delete ret.createdAt,
                 delete ret.updatedAt;
@@ -45,6 +45,6 @@ var foodSchema = new mongoose_1.Schema({
     },
     timestamps: true
 });
-var Food = mongoose_1.default.model('food', foodSchema);
+const Food = mongoose_1.default.model('food', foodSchema);
 exports.Food = Food;
 //# sourceMappingURL=food.js.map

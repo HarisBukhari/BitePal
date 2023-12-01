@@ -24,8 +24,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Vendor = void 0;
-var mongoose_1 = __importStar(require("mongoose"));
-var vendorSchema = new mongoose_1.Schema({
+const mongoose_1 = __importStar(require("mongoose"));
+const vendorSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     ownerName: { type: String, required: true },
     foodType: { type: [String] },
@@ -41,7 +41,7 @@ var vendorSchema = new mongoose_1.Schema({
     foods: [{ type: mongoose_1.default.SchemaTypes.ObjectId, ref: 'food' }]
 }, {
     toJSON: {
-        transform: function (doc, ret) {
+        transform(doc, ret) {
             delete ret.password;
             delete ret.salt;
             delete ret.__v;
@@ -51,6 +51,6 @@ var vendorSchema = new mongoose_1.Schema({
     },
     timestamps: true
 });
-var Vendor = mongoose_1.default.model('vendor', vendorSchema);
+const Vendor = mongoose_1.default.model('vendor', vendorSchema);
 exports.Vendor = Vendor;
 //# sourceMappingURL=vendor.js.map

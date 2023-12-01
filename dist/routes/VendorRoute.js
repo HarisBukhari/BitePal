@@ -4,14 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorRoute = void 0;
-var express_1 = __importDefault(require("express"));
-var controllers_1 = require("../controllers");
-var middlewares_1 = require("../middlewares");
-var multer_1 = __importDefault(require("multer"));
-var router = express_1.default.Router();
+const express_1 = __importDefault(require("express"));
+const controllers_1 = require("../controllers");
+const middlewares_1 = require("../middlewares");
+const multer_1 = __importDefault(require("multer"));
+const router = express_1.default.Router();
 exports.VendorRoute = router;
 //Multer
-var imageStorage = multer_1.default.diskStorage({
+const imageStorage = multer_1.default.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'dist/images');
     },
@@ -21,8 +21,8 @@ var imageStorage = multer_1.default.diskStorage({
         cb(null, new Date().toISOString().replace(/:/g, "-") + "_" + file.originalname);
     }
 });
-var images = (0, multer_1.default)({ storage: imageStorage }).array('images', 10);
-router.get('/', function (req, res, next) {
+const images = (0, multer_1.default)({ storage: imageStorage }).array('images', 10);
+router.get('/', (req, res, next) => {
     return res.json({ "data": "Hello From Vendor!" });
 });
 //Login

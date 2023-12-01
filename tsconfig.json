@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5",                        
+    "target": "es2016",                        
     "module": "commonjs",
     "lib": ["DOM", "ES6", "ESNext.AsyncIterable"],
+    "typeRoots": [ "./source/types","./node_modules/@types"], 
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./source",
@@ -10,6 +11,7 @@
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "forceConsistentCasingInFileNames": true, 
   }
 }
