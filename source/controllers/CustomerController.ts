@@ -156,6 +156,73 @@ export const UpdateCutomerProfile = async (req: Request, res: Response, next: Ne
     }
 }
 
+/* ------------------- Cart Section --------------------- */
+
+
+export const AddToCart = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customer = req.User;
+        if (customer) {
+            const profile = await Customer.findById(customer._id)
+            let cartItems = Array();
+            const { _id, unit } = <CartItem>req.body
+            const food = await Food.findById(_id);
+            if (food) {
+                if (profile != null) {
+                    cartItems = profile.cart;
+                    if (cartItems.length > 0) {
+                        // check and update
+                        let existFoodItems = cartItems.filter((item) => item.food._id.toString() === _id);
+                        if (existFoodItems.length > 0) {
+                            const index = cartItems.indexOf(existFoodItems[0]);
+                            if (unit > 0) {
+                                cartItems[index] = { food, unit };
+                            } else {
+                                cartItems.splice(index, 1);
+                            }
+                        } else {
+                            cartItems.push({ food, unit })
+                        }
+                    } else {
+                        // add new Item
+                        cartItems.push({ food, unit });
+                    }
+                    if (cartItems) {
+                        profile.cart = cartItems as any;
+                        const cartResult = await profile.save();
+                        return res.status(200).json(cartResult.cart);
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+    return res.status(404).json({ msg: 'Unable to add to cart!' });
+}
+
+export const GetCart = async (req: Request, res: Response, next: NextFunction) => {
+    res.status(200).json({ message: "Cart successfully" })
+
+
+}
+
+
+export const DeleteCart = async (req: Request, res: Response, next: NextFunction) => {
+    res.status(200).json({ message: "Cart successfully" })
+
+
+}
+
+
+
+
+
+
+
+
+
 /* ------------------- Order Section --------------------- */
 
 // const validateTransaction = async(txnId: string) => {
@@ -225,7 +292,6 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
         console.error(error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
-
     return res.status(400).json({ msg: 'Error while Creating Order' })
 }
 
