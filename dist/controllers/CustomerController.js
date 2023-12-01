@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetOrderById = exports.GetOrders = exports.CreateOrder = exports.UpdateCutomerProfile = exports.CustomerProfile = exports.OTP = exports.CustomerVerify = exports.CustomerLogin = exports.CustomerSignUp = exports.findCustomer = void 0;
+exports.GetOrderById = exports.GetOrders = exports.CreateOrder = exports.DeleteCart = exports.GetCart = exports.AddToCart = exports.UpdateCutomerProfile = exports.CustomerProfile = exports.OTP = exports.CustomerVerify = exports.CustomerLogin = exports.CustomerSignUp = exports.findCustomer = void 0;
 const models_1 = require("../models");
 const utilities_1 = require("../utilities");
 const class_transformer_1 = require("class-transformer");
@@ -168,6 +168,90 @@ const UpdateCutomerProfile = (req, res, next) => __awaiter(void 0, void 0, void 
     }
 });
 exports.UpdateCutomerProfile = UpdateCutomerProfile;
+/* ------------------- Cart Section --------------------- */
+const AddToCart = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const customer = req.User;
+        if (customer) {
+            const profile = yield models_1.Customer.findById(customer._id);
+            let cartItems = Array();
+            const { _id, unit } = req.body;
+            const food = yield models_1.Food.findById(_id);
+            if (food) {
+                if (profile != null) {
+                    cartItems = profile.cart;
+                    if (cartItems.length > 0) {
+                        // check and update
+                        let existFoodItems = cartItems.filter((item) => item.food._id.toString() === _id);
+                        if (existFoodItems.length > 0) {
+                            const index = cartItems.indexOf(existFoodItems[0]);
+                            if (unit > 0) {
+                                cartItems[index] = { food, unit };
+                            }
+                            else {
+                                cartItems.splice(index, 1);
+                            }
+                        }
+                        else {
+                            cartItems.push({ food, unit });
+                        }
+                    }
+                    else {
+                        // add new Item
+                        cartItems.push({ food, unit });
+                    }
+                    if (cartItems) {
+                        profile.cart = cartItems;
+                        const cartResult = yield profile.save();
+                        return res.status(200).json(cartResult.cart);
+                    }
+                }
+            }
+        }
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+    return res.status(404).json({ msg: 'Unable to add to cart!' });
+});
+exports.AddToCart = AddToCart;
+const GetCart = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const customer = req.User;
+        if (customer) {
+            const profile = yield models_1.Customer.findById(customer._id);
+            if (profile) {
+                return res.status(200).json(profile.cart);
+            }
+        }
+        return res.status(400).json({ message: 'Cart is Empty!' });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+exports.GetCart = GetCart;
+const DeleteCart = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const customer = req.User;
+        if (customer) {
+            const profile = yield models_1.Customer.findById(customer._id).populate('cart.food');
+            if (profile != null) {
+                profile.cart = [];
+                const cartResult = yield profile.save();
+                return res.status(200).json(cartResult);
+            }
+        }
+        return res.status(400).json({ message: 'cart is Already Empty!' });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+exports.DeleteCart = DeleteCart;
 /* ------------------- Order Section --------------------- */
 // const validateTransaction = async(txnId: string) => {
 //     const currentTransaction = await Transaction.findById(txnId)
@@ -236,23 +320,35 @@ const CreateOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.CreateOrder = CreateOrder;
 const GetOrders = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const customer = req.User;
-    if (customer) {
-        const profile = yield models_1.Customer.findById(customer._id).populate("orders");
-        if (profile) {
-            return res.status(200).json(profile.orders);
+    try {
+        const customer = req.User;
+        if (customer) {
+            const profile = yield models_1.Customer.findById(customer._id).populate("orders");
+            if (profile) {
+                return res.status(200).json(profile.orders);
+            }
         }
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
     return res.status(400).json({ msg: 'Orders not found' });
 });
 exports.GetOrders = GetOrders;
 const GetOrderById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const orderId = req.params.id;
-    if (orderId) {
-        const order = yield models_1.Customer.findById(orderId).populate("items.food");
-        if (order) {
-            return res.status(200).json(order);
+    try {
+        const orderId = req.params.id;
+        if (orderId) {
+            const order = yield order_1.Order.findById(orderId).populate("items.food");
+            if (order) {
+                return res.status(200).json(order);
+            }
         }
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
     return res.status(400).json({ msg: 'Order not found' });
 });

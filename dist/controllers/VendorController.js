@@ -192,7 +192,7 @@ const getFoods = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             }
         }
         else {
-            res.status(404).json({ message: "Something went wrong" });
+            res.status(404).json({ message: "! Something went wrong" });
         }
     }
 });

@@ -13,6 +13,7 @@ exports.OrderInputs = exports.CartItem = exports.CustomersLogin = exports.EditCu
 const class_validator_1 = require("class-validator");
 class CreateCustomerInputs {
 }
+exports.CreateCustomerInputs = CreateCustomerInputs;
 __decorate([
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
@@ -25,9 +26,9 @@ __decorate([
     (0, class_validator_1.Length)(7, 12),
     __metadata("design:type", String)
 ], CreateCustomerInputs.prototype, "password", void 0);
-exports.CreateCustomerInputs = CreateCustomerInputs;
 class EditCustomerInputs {
 }
+exports.EditCustomerInputs = EditCustomerInputs;
 __decorate([
     (0, class_validator_1.Length)(3, 16),
     __metadata("design:type", String)
@@ -40,9 +41,9 @@ __decorate([
     (0, class_validator_1.Length)(6, 30),
     __metadata("design:type", String)
 ], EditCustomerInputs.prototype, "address", void 0);
-exports.EditCustomerInputs = EditCustomerInputs;
 class CustomersLogin {
 }
+exports.CustomersLogin = CustomersLogin;
 __decorate([
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
@@ -51,7 +52,6 @@ __decorate([
     (0, class_validator_1.Length)(7, 12),
     __metadata("design:type", String)
 ], CustomersLogin.prototype, "password", void 0);
-exports.CustomersLogin = CustomersLogin;
 class CartItem {
 }
 exports.CartItem = CartItem;
