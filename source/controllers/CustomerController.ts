@@ -161,66 +161,81 @@ export const UpdateCutomerProfile = async (req: Request, res: Response, next: Ne
 
 export const AddToCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const customer = req.User;
+        const customer = req.User
         if (customer) {
             const profile = await Customer.findById(customer._id)
-            let cartItems = Array();
+            let cartItems = Array()
             const { _id, unit } = <CartItem>req.body
-            const food = await Food.findById(_id);
+            const food = await Food.findById(_id)
             if (food) {
                 if (profile != null) {
-                    cartItems = profile.cart;
+                    cartItems = profile.cart
                     if (cartItems.length > 0) {
                         // check and update
-                        let existFoodItems = cartItems.filter((item) => item.food._id.toString() === _id);
+                        let existFoodItems = cartItems.filter((item) => item.food._id.toString() === _id)
                         if (existFoodItems.length > 0) {
-                            const index = cartItems.indexOf(existFoodItems[0]);
+                            const index = cartItems.indexOf(existFoodItems[0])
                             if (unit > 0) {
-                                cartItems[index] = { food, unit };
+                                cartItems[index] = { food, unit }
                             } else {
-                                cartItems.splice(index, 1);
+                                cartItems.splice(index, 1)
                             }
                         } else {
                             cartItems.push({ food, unit })
                         }
                     } else {
                         // add new Item
-                        cartItems.push({ food, unit });
+                        cartItems.push({ food, unit })
                     }
                     if (cartItems) {
-                        profile.cart = cartItems as any;
-                        const cartResult = await profile.save();
-                        return res.status(200).json(cartResult.cart);
+                        profile.cart = cartItems as any
+                        const cartResult = await profile.save()
+                        return res.status(200).json(cartResult.cart)
                     }
                 }
             }
         }
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
-    return res.status(404).json({ msg: 'Unable to add to cart!' });
+    return res.status(404).json({ msg: 'Unable to add to cart!' })
 }
 
 export const GetCart = async (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).json({ message: "Cart successfully" })
-
-
+    try {
+        const customer = req.User
+        if (customer) {
+            const profile = await Customer.findById(customer._id)
+            if (profile) {
+                return res.status(200).json(profile.cart)
+            }
+        }
+        return res.status(400).json({ message: 'Cart is Empty!' })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
 }
 
 
 export const DeleteCart = async (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).json({ message: "Cart successfully" })
-
-
+    try {
+        const customer = req.User
+        if (customer) {
+            const profile = await Customer.findById(customer._id).populate('cart.food')
+            if (profile != null) {
+                profile.cart = [] as any
+                const cartResult = await profile.save()
+                return res.status(200).json(cartResult)
+            }
+        }
+        return res.status(400).json({ message: 'cart is Already Empty!' })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
 }
-
-
-
-
-
-
-
 
 
 /* ------------------- Order Section --------------------- */
@@ -289,8 +304,8 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
             }
         }
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
     return res.status(400).json({ msg: 'Error while Creating Order' })
 }
@@ -305,8 +320,8 @@ export const GetOrders = async (req: Request, res: Response, next: NextFunction)
             }
         }
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
     return res.status(400).json({ msg: 'Orders not found' })
 }
@@ -322,8 +337,8 @@ export const GetOrderById = async (req: Request, res: Response, next: NextFuncti
             }
         }
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
     return res.status(400).json({ msg: 'Order not found' })
 }
