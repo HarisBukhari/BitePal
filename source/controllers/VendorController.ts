@@ -96,7 +96,7 @@ export const updateVendorImage = async (req: Request, res: Response, next: NextF
             //Here
             try {
                 const files = req.files as [Express.Multer.File]
-                const images = files.map((file: Express.Multer.File)=> file.filename)
+                const images = files.map((file: Express.Multer.File) => file.filename)
                 vendorProfile.coverImage.push(...images)
                 await vendorProfile.save()
                 return res.status(201).json({ "success": vendorProfile })
@@ -124,7 +124,7 @@ export const addFood = async (req: Request, res: Response, next: NextFunction) =
             const { name, category, description, foodType, price, readyTime } = <CreateFoodInput>req.body
             try {
                 const files = req.files as [Express.Multer.File]
-                const images = files.map((file: Express.Multer.File)=> file.filename)
+                const images = files.map((file: Express.Multer.File) => file.filename)
                 const food = await Food.create({
                     vendorId: vendorProfile._id,
                     name: name,
@@ -172,4 +172,36 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
         }
     }
 
+}
+
+
+//Orders
+export const GetCurrentOrders = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        res.status(200).json({ message: 'Get Current Orders' })
+
+    }catch (err) {
+        console.error('Database error:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+
+export const ProcessOrder = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        res.status(200).json({ message: 'Process Order' })
+    }catch (err) {
+        console.error('Database error:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+
+export const GetOrderDetails = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        res.status(200).json({ message: 'Get Order Details' })
+    }catch (err) {
+        console.error('Database error:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 }
