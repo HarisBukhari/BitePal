@@ -230,7 +230,7 @@ export const DeleteCart = async (req: Request, res: Response, next: NextFunction
                 return res.status(200).json(cartResult)
             }
         }
-        return res.status(400).json({ message: 'cart is Already Empty!' })
+        return res.status(400).json({ message: 'Cart Is Already Empty!' })
     } catch (error) {
         console.error(error)
         return res.status(500).json({ message: 'Internal Server Error' })
