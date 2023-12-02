@@ -300,7 +300,7 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
 
                 // await assignOrderForDelivery(currentOrder._id, vendorId)
                 const profileResponse = await profile.save()
-                return res.status(200).json(currentOrder)
+                return res.status(200).json(profileResponse)
             }
         }
     } catch (error) {
