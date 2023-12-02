@@ -285,7 +285,7 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
                     totalAmount: netAmount,
                     paidAmount: amount,
                     orderDate: new Date(),
-                    orderStatus: 'Waiting',
+                    orderStatus: 'Pending',
                     remarks: '',
                     deliveryId: '',
                     readyTime: 45
@@ -300,7 +300,7 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
 
                 // await assignOrderForDelivery(currentOrder._id, vendorId)
                 const profileResponse = await profile.save()
-                return res.status(200).json(profileResponse)
+                return res.status(200).json(currentOrder)
             }
         }
     } catch (error) {
