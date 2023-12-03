@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from "express"
-import { Customer, Food } from "../models"
-import { generateOtop, generateSalt, generateSign, hashPassword, requestOtp, verifyPassword } from "../utilities"
+import { Customer, Food, Order } from "../models"
 import { plainToClass } from "class-transformer"
 import { validate } from "class-validator"
+import { generateOtop, generateSalt, generateSign, hashPassword, requestOtp, verifyPassword } from "../utilities"
 import { CartItem, CreateCustomerInputs, CustomersLogin, EditCustomerInputs, OrderInputs } from "../dto"
-import { Order } from "../models/order"
 
 
 export const findCustomer = async (id: string | undefined, email?: string) => {
