@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import { Customer, Food, Order } from "../models"
+import { Customer, Food, Offer, Order, Transaction } from "../models"
 import { plainToClass } from "class-transformer"
 import { validate } from "class-validator"
 import { generateOtop, generateSalt, generateSign, hashPassword, requestOtp, verifyPassword } from "../utilities"
@@ -23,7 +23,6 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
     if (inputErrors.length > 0) {
         return res.status(400).json(inputErrors)
     }
-
     const { email, password, phone } = customerInputs
     const salt = await generateSalt()
     const userPassword = await hashPassword(password, salt)
@@ -42,7 +41,6 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
         lat: 0,
         lng: 0
     })
-
     if (customer) {
         await requestOtp(otp, phone)
         const signature = generateSign({
@@ -50,13 +48,11 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
             email: customer.email,
             verified: customer.phone,
         })
-
         res.status(201).json(({
             signature: signature,
             verified: customer.verified,
             email: customer.email
         }))
-
     } else {
         res.status(400).json({ err: "Something went wrong" })
     }
@@ -110,7 +106,24 @@ export const CustomerVerify = async (req: Request, res: Response, next: NextFunc
 }
 
 export const OTP = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customer = req.User
+        if (customer) {
+            const customerProfile = await (findCustomer(customer._id, ""))
+            if (customerProfile) {
+                const { otp, otp_expiry } = generateOtop()
+                const result = await requestOtp(otp, customerProfile.phone)
+                customerProfile.otp = otp
+                customerProfile.otp_expiry = otp_expiry
+                await customerProfile.save()
+                res.status(200).json(customerProfile.otp)
+            }
+        }
 
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
 
 }
 
@@ -342,4 +355,62 @@ export const GetOrderById = async (req: Request, res: Response, next: NextFuncti
         return res.status(500).json({ message: 'Internal Server Error' })
     }
     return res.status(400).json({ msg: 'Order not found' })
+}
+
+
+/* ------------------- Verify Offer Section --------------------- */
+
+export const VerifyOffer = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const offerId = req.params.id
+        const customer = req.User
+        if (customer) {
+            const appliedOffer = await Offer.findById(offerId)
+            if (appliedOffer) {
+                if (appliedOffer.isActive) {
+                    return res.status(200).json({ message: 'Offer is Valid', offer: appliedOffer })
+                }
+            }
+        }
+        return res.status(400).json({ msg: 'Offer is Not Valid' })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+
+/* ------------------- Transaction Section --------------------- */
+
+export const CreatePayment = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customer = req.User
+        const { amount, paymentMode, offerId } = req.body
+        let payableAmount = Number(amount)
+        if (offerId) {
+            const appliedOffer = await Offer.findById(offerId).populate('vendors')
+            // console.log(appliedOffer)
+            if (appliedOffer.isActive) {
+                payableAmount = (payableAmount - appliedOffer.offerAmount)
+            }
+        }
+        // perform payment gateway charge api
+
+        // create record on transaction
+        const transaction = await Transaction.create({
+            customer: customer._id,
+            vendorId: '',
+            orderId: '',
+            orderValue: payableAmount,
+            offerUsed: offerId || 'NA',
+            status: 'OPEN',
+            paymentMode: paymentMode,
+            paymentResponse: 'Payment is cash on Delivery'
+        })
+        //return transaction
+        return res.status(200).json(transaction)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
 }

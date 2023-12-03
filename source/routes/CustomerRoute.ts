@@ -1,11 +1,8 @@
-import express, { Request, Response, NextFunction } from "express"
-import { AddToCart, CreateOrder, CustomerLogin, CustomerProfile, CustomerSignUp, CustomerVerify, DeleteCart, GetCart, GetOrderById, GetOrders, OTP, UpdateCutomerProfile,  } from "../controllers"
+import express from "express"
+import { AddToCart, CreateOrder, CreatePayment, CustomerLogin, CustomerProfile, CustomerSignUp, CustomerVerify, DeleteCart, GetCart, GetOrderById, GetOrders, OTP, UpdateCutomerProfile, VerifyOffer,  } from "../controllers"
 import { Authenticate } from "../middlewares"
-const router = express.Router()
 
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
-    return res.json({ "data": "Hello From Admin!" })
-})
+const router = express.Router()
 
 /* ------------------- Login/SignUp Section --------------------- */
 
@@ -21,6 +18,11 @@ router.get('/otp', OTP)
 router.get('/profile', CustomerProfile)
 router.patch('/profile', UpdateCutomerProfile)
 
+/* ------------------- Profile Section --------------------- */
+router.get('/offer/verify/:id', VerifyOffer)
+
+/* ------------------- Profile Section --------------------- */
+router.post('/create-payment', CreatePayment)
 
 /* ------------------- Cart Section --------------------- */
 

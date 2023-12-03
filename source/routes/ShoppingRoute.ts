@@ -1,14 +1,7 @@
-import express, { Request, Response, NextFunction } from "express"
-import { GetFoodAvailability, GetTopRestaurants, GetFoodIn30Min, SearchFoods, RestuarantsByID, getFoods } from "../controllers"
-import { Authenticate } from "../middlewares"
+import express  from "express"
+import { GetFoodAvailability, GetTopRestaurants, GetFoodIn30Min, SearchFoods, RestuarantsByID } from "../controllers"
 
 const router = express.Router()
-
-
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
-    return res.json({ "data": "Hello From Vendor!" })
-})
-
 
 /* ------------------- Restaurants Section --------------------- */
 

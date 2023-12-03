@@ -1,10 +1,6 @@
-import express, { Request, Response, NextFunction } from "express"
+import express from "express"
 import { CreateVendor, GetVendorById, GetVendors } from "../controllers"
 const router = express.Router()
-
-router.get('/', (req: Request, res: Response, next: NextFunction) => {
-    return res.json({ "data": "Hello From Admin!" })
-})
 
 /* ------------------- Admin Vendor Section --------------------- */
 router.get('/vendors', GetVendors)

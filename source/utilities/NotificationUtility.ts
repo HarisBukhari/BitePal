@@ -14,7 +14,7 @@ export const requestOtp = async (otp: number, to: String) => {
     try {
         const client = require('twilio')(T_ID, T_Token)
         const response = await client.messages.create({
-            body: `Farig Yeah Lai Apni OTP ${otp}`,
+            body: `Your OTP is ${otp}`,
             from: '+12394490950',
             to: `+92${to}`
         })

@@ -43,6 +43,8 @@ export const getVendor = async (req: Request, res: Response, next: NextFunction)
         res.status(404).json({ message: "Something went wrong" })
     }
 }
+
+
 export const updateVendor = async (req: Request, res: Response, next: NextFunction) => {
     const vendor = req.User
     const { address, foodType, name, phone } = <UpdateVendor>req.body
@@ -113,7 +115,6 @@ export const updateVendorImage = async (req: Request, res: Response, next: NextF
     }
 }
 
-
 /* ------------------- Vendor Food Section --------------------- */
 
 export const addFood = async (req: Request, res: Response, next: NextFunction) => {
@@ -181,16 +182,12 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
 export const GetCurrentOrders = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.User
-
         if (user) {
-
             const orders = await Order.find({ vendorId: user._id }).populate('items.food')
-
             if (orders != null) {
                 return res.status(200).json(orders)
             }
         }
-
         return res.json({ message: 'Orders Not found' })
     } catch (err) {
         console.error('Database error:', err)
@@ -201,17 +198,13 @@ export const GetCurrentOrders = async (req: Request, res: Response, next: NextFu
 export const GetOrderDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const orderId = req.params.id
-    
-    if(orderId){
-
-        const order = await Order.findById(orderId).populate('items.food')
-
-        if(order != null){
-            return res.status(200).json(order)
+        if (orderId) {
+            const order = await Order.findById(orderId).populate('items.food')
+            if (order != null) {
+                return res.status(200).json(order)
+            }
         }
-    }
-
-    return res.json({ message: 'Order Not found'})
+        return res.json({ message: 'Order Not found' })
     } catch (err) {
         console.error('Database error:', err)
         res.status(500).json({ message: 'Internal server error' })
@@ -221,28 +214,20 @@ export const GetOrderDetails = async (req: Request, res: Response, next: NextFun
 export const ProcessOrder = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const orderId = req.params.id
-
-    const { status, remarks, time } = req.body
-
-    
-    if(orderId){
-
-        const order = await Order.findById(orderId).populate('food')
-
-        order.orderStatus = status
-        order.remarks = remarks
-        if(time){
-            order.readyTime = time
+        const { status, remarks, time } = req.body
+        if (orderId) {
+            const order = await Order.findById(orderId).populate('food')
+            order.orderStatus = status
+            order.remarks = remarks
+            if (time) {
+                order.readyTime = time
+            }
+            const orderResult = await order.save()
+            if (orderResult != null) {
+                return res.status(200).json(orderResult)
+            }
         }
-
-        const orderResult = await order.save()
-
-        if(orderResult != null){
-            return res.status(200).json(orderResult)
-        }
-    }
-
-    return res.json({ message: 'Unable to process order'})
+        return res.json({ message: 'Unable to process order' })
     } catch (err) {
         console.error('Database error:', err)
         res.status(500).json({ message: 'Internal server error' })
@@ -252,57 +237,38 @@ export const ProcessOrder = async (req: Request, res: Response, next: NextFuncti
 /* ------------------- Vendor Offer Section --------------------- */
 
 export const GetOffers = async (req: Request, res: Response, next: NextFunction) => {
-
-
-    const user = req.User;
-
-    if(user){
-        let currentOffer = Array();
-
-        const offers = await Offer.find().populate('vendors');
-
-        if(offers){
-
-
+    const user = req.User
+    if (user) {
+        let currentOffer = Array()
+        const offers = await Offer.find().populate('vendors')
+        if (offers) {
             offers.map(item => {
-
-                if(item.vendors){
+                if (item.vendors) {
                     item.vendors.map(vendor => {
-                        if(vendor._id.toString() === user._id){
-                            currentOffer.push(item);
+                        if (vendor._id.toString() === user._id) {
+                            currentOffer.push(item)
                         }
                     })
                 }
-
-                if(item.offerType === "GENERIC"){
+                if (item.offerType === "GENERIC") {
                     currentOffer.push(item)
                 }
-
             })
-
         }
-
-        return res.status(200).json(currentOffer);
-
+        return res.status(200).json(currentOffer)
     }
-
-    return res.json({ message: 'Offers Not available'});
+    return res.json({ message: 'Offers Not available' })
 }
 
 
 export const AddOffer = async (req: Request, res: Response, next: NextFunction) => {
-
-
-    const user = req.User;
-
-    if(user){
+    const user = req.User
+    if (user) {
         const { title, description, offerType, offerAmount, pincode,
-        promocode, promoType, startValidity, endValidity, bank, bins, minValue, isActive } = <CreateOfferInputs>req.body;
-
-        const vendor = await findVendor(user._id);
-
-        if(vendor){
-
+                promocode, promoType, startValidity, endValidity, bank,
+                bins, minValue, isActive } = <CreateOfferInputs>req.body
+        const vendor = await findVendor(user._id)
+        if (vendor) {
             const offer = await Offer.create({
                 title,
                 description,
@@ -315,62 +281,40 @@ export const AddOffer = async (req: Request, res: Response, next: NextFunction) 
                 bank,
                 isActive,
                 minValue,
-                vendor:[vendor]
+                vendors: [vendor]
             })
-
-            console.log(offer);
-
-            return res.status(200).json(offer);
-
+            return res.status(200).json(offer)
         }
-
     }
-
-    return res.json({ message: 'Unable to add Offer!'});
-
-    
-
+    return res.json({ message: 'Unable to add Offer!' })
 }
 
 export const EditOffer = async (req: Request, res: Response, next: NextFunction) => {
-
-
-    const user = req.User;
-    const offerId = req.params.id;
-
-    if(user){
+    const user = req.User
+    const offerId = req.params.id
+    if (user) {
         const { title, description, offerType, offerAmount, pincode,
-        promocode, promoType, startValidity, endValidity, bank, bins, minValue, isActive } = <CreateOfferInputs>req.body;
-
-        const currentOffer = await Offer.findById(offerId);
-
-        if(currentOffer){
-
-            const vendor = await findVendor(user._id);
-
-            if(vendor){
-           
+                promocode, promoType, startValidity, endValidity, bank, 
+                bins, minValue, isActive } = <CreateOfferInputs>req.body
+        const currentOffer = await Offer.findById(offerId)
+        if (currentOffer) {
+            const vendor = await findVendor(user._id)
+            if (vendor) {
                 currentOffer.title = title,
-                currentOffer.description = description,
-                currentOffer.offerType = offerType,
-                currentOffer.offerAmount = offerAmount,
-                currentOffer.pincode = pincode,
-                currentOffer.promoType = promoType,
-                currentOffer.startValidity = startValidity,
-                currentOffer.endValidity = endValidity,
-                currentOffer.bank = bank,
-                currentOffer.isActive = isActive,
-                currentOffer.minValue = minValue;
-
-                const result = await currentOffer.save();
-
-                return res.status(200).json(result);
+                    currentOffer.description = description,
+                    currentOffer.offerType = offerType,
+                    currentOffer.offerAmount = offerAmount,
+                    currentOffer.pincode = pincode,
+                    currentOffer.promoType = promoType,
+                    currentOffer.startValidity = startValidity,
+                    currentOffer.endValidity = endValidity,
+                    currentOffer.bank = bank,
+                    currentOffer.isActive = isActive,
+                    currentOffer.minValue = minValue
+                const result = await currentOffer.save()
+                return res.status(200).json(result)
             }
-            
         }
-
     }
-
-    return res.json({ message: 'Unable to add Offer!'});    
-
+    return res.json({ message: 'Unable to add Offer!' })
 }
