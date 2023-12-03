@@ -9,13 +9,9 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
     return res.json({ "data": "Hello From Vendor!" })
 })
 
-//Login
-// router.post('/login', login)
 
-//Authentication
-// router.use(Authenticate)
+/* ------------------- Restaurants Section --------------------- */
 
-//Vendor
 router.get('/:pincode',GetFoodAvailability)
 router.get('/top-restaurants/:pincode', GetTopRestaurants)
 router.get('/foods-in-30-min/:pincode', GetFoodIn30Min)

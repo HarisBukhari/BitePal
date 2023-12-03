@@ -24,28 +24,32 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
     return res.json({ "data": "Hello From Vendor!" })
 })
 
-//Login
-router.post('/login', login)
+/* ------------------- Vendor Login/Auth Section --------------------- */
 
-//Authentication
+router.post('/login', login)
 router.use(Authenticate)
 
-//Vendor
+/* ------------------- Vendor Profile Section --------------------- */
+
 router.get('/profile', getVendor)
 router.patch('/update', updateVendor)
 router.patch('/update/service', updateVendorService)
 router.patch('/update/coverImage', images, updateVendorImage)
 
-//Food
+
+/* ------------------- Vendor Food Section --------------------- */
+
 router.post('/food', images, addFood)
 router.get('/food', getFoods)
 
-//Orders
+/* ------------------- Vendor Order Section --------------------- */
+
 router.get('/orders',GetCurrentOrders)
 router.get('/order/:id',GetOrderDetails)
 router.put('/order/:id/process',ProcessOrder)
 
-//Offers
+/* ------------------- Vendor Offers Section --------------------- */
+
 router.get('/offers', GetOffers);
 router.post('/offer', AddOffer);
 router.put('/offer/:id', EditOffer)

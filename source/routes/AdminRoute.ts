@@ -6,11 +6,9 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
     return res.json({ "data": "Hello From Admin!" })
 })
 
+/* ------------------- Admin Vendor Section --------------------- */
 router.get('/vendors', GetVendors)
-
 router.get('/vendor/:id', GetVendorById)
-
-
 router.post('/vendor', CreateVendor)
 
 
