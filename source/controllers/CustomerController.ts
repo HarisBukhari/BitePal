@@ -254,34 +254,32 @@ export const DeleteCart = async (req: Request, res: Response, next: NextFunction
 
 /* ------------------- Order Section --------------------- */
 
-// const validateTransaction = async(txnId: string) => {
-
-//     const currentTransaction = await Transaction.findById(txnId)
-
-//     if(currentTransaction){
-//         if(currentTransaction.status.toLowerCase() !== 'failed'){
-//             return {status: true, currentTransaction}
-//         }
-//     }
-//     return {status: false, currentTransaction}
-// }
+const validateTransaction = async (txnId: string) => {
+    const currentTransaction = await Transaction.findById(txnId)
+    if (currentTransaction) {
+        if (currentTransaction.status.toLowerCase() !== 'failed') {
+            return { status: true, currentTransaction }
+        }
+    }
+    return { status: false, currentTransaction }
+}
 
 export const CreateOrder = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const customer = req.User
         const { txnId, amount, items } = <OrderInputs>req.body
         if (customer) {
-            // const { status, currentTransaction } =  await validateTransaction(txnId)
-            // if(!status){
-            //     return res.status(404).json({ message: 'Error while Creating Order!'})
-            // }
+            const { status, currentTransaction } = await validateTransaction(txnId)
+            if (!status) {
+                return res.status(404).json({ message: 'Error while Creating Order!' })
+            }
             const profile = await Customer.findById(customer._id)
             const orderId = `${Math.floor(Math.random() * 89999) + 1000}`
-            const cart = <[CartItem]>req.body
+            const cart = <[CartItem]>items
             let cartItems = Array()
             let netAmount = 0.0
             let vendorId
-            const foods = await Food.find().where('_id').in(cart.map(item => item._id)).exec()
+            const foods = await Food.find().where('_id').in(cart.map(item => item._id))
             foods.map(food => {
                 cart.map(({ _id, unit }) => {
                     if (food._id == _id) {
@@ -306,11 +304,10 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
                 })
                 profile.cart = [] as any
                 profile.orders.push(currentOrder)
-                // currentTransaction.vendorId = vendorId
-                // currentTransaction.orderId = orderId
-                // currentTransaction.status = 'CONFIRMED'
-
-                // await currentTransaction.save()
+                currentTransaction.vendorId = vendorId
+                currentTransaction.orderId = orderId
+                currentTransaction.status = 'CONFIRMED'
+                await currentTransaction.save()
 
                 // await assignOrderForDelivery(currentOrder._id, vendorId)
                 const profileResponse = await profile.save()
@@ -319,10 +316,12 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
         }
     } catch (error) {
         console.error(error)
-        return res.status(500).json({ message: 'Internal Server Error' })
+        return res.status(400).json({ msg: 'Error while Creating Order' })
     }
-    return res.status(400).json({ msg: 'Error while Creating Order' })
+    return res.status(500).json({ message: 'Internal Server Error' })
+
 }
+
 
 export const GetOrders = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -357,6 +356,22 @@ export const GetOrderById = async (req: Request, res: Response, next: NextFuncti
     return res.status(400).json({ msg: 'Order not found' })
 }
 
+export const GetTransactions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customer = req.User
+        if (customer) {
+            const transactions = await Transaction.find({customer: customer._id})
+            if (transactions) {
+                return res.status(200).json(transactions)
+            }
+        }
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json({ msg: 'Transactions not found' })
+    }
+    return res.status(500).json({ message: 'Internal Server Error' })
+}
+
 
 /* ------------------- Verify Offer Section --------------------- */
 
@@ -389,7 +404,7 @@ export const CreatePayment = async (req: Request, res: Response, next: NextFunct
         let payableAmount = Number(amount)
         if (offerId) {
             const appliedOffer = await Offer.findById(offerId).populate('vendors')
-            // console.log(appliedOffer)
+            console.log(appliedOffer)
             if (appliedOffer.isActive) {
                 payableAmount = (payableAmount - appliedOffer.offerAmount)
             }

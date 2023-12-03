@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { UpdateVendor, VendorLogin, CreateFoodInput, CreateOfferInputs } from "../dto"
 import { findVendor } from "."
 import { generateSign, verifyPassword } from "../utilities"
-import { Food, Offer, Order } from "../models"
+import { Food, Offer, Order, Transaction } from "../models"
 
 
 /* ------------------- Vendor Profile Section --------------------- */
@@ -317,4 +317,20 @@ export const EditOffer = async (req: Request, res: Response, next: NextFunction)
         }
     }
     return res.json({ message: 'Unable to add Offer!' })
+}
+
+export const GetVendorTransactions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const customer = req.User
+        if (customer) {
+            const transactions = await Transaction.find({customer: customer._id})
+            if (transactions) {
+                return res.status(200).json(transactions)
+            }
+        }
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json({ msg: 'Transactions not found' })
+    }
+    return res.status(500).json({ message: 'Internal Server Error' })
 }
