@@ -6,6 +6,8 @@ import { generateOtop, generateSalt, generateSign, hashPassword, requestOtp, ver
 import { CartItem, CreateCustomerInputs, CustomersLogin, EditCustomerInputs, OrderInputs } from "../dto"
 
 
+/* ------------------- Customer Profile Section --------------------- */
+
 export const findCustomer = async (id: string | undefined, email?: string) => {
     if (email) {
         return await Customer.findOne({ email: email })

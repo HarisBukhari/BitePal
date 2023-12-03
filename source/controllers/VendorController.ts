@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express"
-import { UpdateVendor, VendorLogin, CreateFoodInput } from "../dto"
+import { UpdateVendor, VendorLogin, CreateFoodInput, CreateOfferInputs } from "../dto"
 import { findVendor } from "."
 import { generateSign, verifyPassword } from "../utilities"
-import { Food, Order } from "../models"
+import { Food, Offer, Order } from "../models"
 
 
-//Vendor Controller
+/* ------------------- Vendor Profile Section --------------------- */
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <VendorLogin>req.body
@@ -114,7 +114,7 @@ export const updateVendorImage = async (req: Request, res: Response, next: NextF
 }
 
 
-//Food Controller
+/* ------------------- Vendor Food Section --------------------- */
 
 export const addFood = async (req: Request, res: Response, next: NextFunction) => {
     const vendor = req.User
@@ -176,7 +176,8 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
 }
 
 
-//Orders
+/* ------------------- Vendor Order Section --------------------- */
+
 export const GetCurrentOrders = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = req.User
@@ -248,3 +249,128 @@ export const ProcessOrder = async (req: Request, res: Response, next: NextFuncti
     }
 }
 
+/* ------------------- Vendor Offer Section --------------------- */
+
+export const GetOffers = async (req: Request, res: Response, next: NextFunction) => {
+
+
+    const user = req.User;
+
+    if(user){
+        let currentOffer = Array();
+
+        const offers = await Offer.find().populate('vendors');
+
+        if(offers){
+
+
+            offers.map(item => {
+
+                if(item.vendors){
+                    item.vendors.map(vendor => {
+                        if(vendor._id.toString() === user._id){
+                            currentOffer.push(item);
+                        }
+                    })
+                }
+
+                if(item.offerType === "GENERIC"){
+                    currentOffer.push(item)
+                }
+
+            })
+
+        }
+
+        return res.status(200).json(currentOffer);
+
+    }
+
+    return res.json({ message: 'Offers Not available'});
+}
+
+
+export const AddOffer = async (req: Request, res: Response, next: NextFunction) => {
+
+
+    const user = req.User;
+
+    if(user){
+        const { title, description, offerType, offerAmount, pincode,
+        promocode, promoType, startValidity, endValidity, bank, bins, minValue, isActive } = <CreateOfferInputs>req.body;
+
+        const vendor = await findVendor(user._id);
+
+        if(vendor){
+
+            const offer = await Offer.create({
+                title,
+                description,
+                offerType,
+                offerAmount,
+                pincode,
+                promoType,
+                startValidity,
+                endValidity,
+                bank,
+                isActive,
+                minValue,
+                vendor:[vendor]
+            })
+
+            console.log(offer);
+
+            return res.status(200).json(offer);
+
+        }
+
+    }
+
+    return res.json({ message: 'Unable to add Offer!'});
+
+    
+
+}
+
+export const EditOffer = async (req: Request, res: Response, next: NextFunction) => {
+
+
+    const user = req.User;
+    const offerId = req.params.id;
+
+    if(user){
+        const { title, description, offerType, offerAmount, pincode,
+        promocode, promoType, startValidity, endValidity, bank, bins, minValue, isActive } = <CreateOfferInputs>req.body;
+
+        const currentOffer = await Offer.findById(offerId);
+
+        if(currentOffer){
+
+            const vendor = await findVendor(user._id);
+
+            if(vendor){
+           
+                currentOffer.title = title,
+                currentOffer.description = description,
+                currentOffer.offerType = offerType,
+                currentOffer.offerAmount = offerAmount,
+                currentOffer.pincode = pincode,
+                currentOffer.promoType = promoType,
+                currentOffer.startValidity = startValidity,
+                currentOffer.endValidity = endValidity,
+                currentOffer.bank = bank,
+                currentOffer.isActive = isActive,
+                currentOffer.minValue = minValue;
+
+                const result = await currentOffer.save();
+
+                return res.status(200).json(result);
+            }
+            
+        }
+
+    }
+
+    return res.json({ message: 'Unable to add Offer!'});    
+
+}

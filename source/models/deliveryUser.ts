@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { OrderDoc } from './Order';
+import { OrderDoc } from './order';
 
 
 interface DeliveryUserDoc extends Document {
