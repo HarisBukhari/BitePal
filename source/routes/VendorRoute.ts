@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from "express"
-import { login, getVendor, updateVendor, updateVendorImage, updateVendorService, addFood, getFoods, GetCurrentOrders, ProcessOrder, GetOrderDetails, GetOffers, EditOffer, AddOffer, GetVendorTransactions } from "../controllers"
+import { login, getVendor, updateVendor, updateVendorImage, updateVendorService, addFood, getFoods, GetCurrentOrders, ProcessOrder, GetOrderDetails, GetOffers, EditOffer, AddOffer } from "../controllers"
 import { Authenticate } from "../middlewares"
 import multer from "multer"
 
@@ -46,7 +46,6 @@ router.get('/food', getFoods)
 
 router.get('/orders',GetCurrentOrders)
 router.get('/order/:id',GetOrderDetails)
-router.get('/orders/transaction',GetVendorTransactions)
 router.put('/order/:id/process',ProcessOrder)
 
 /* ------------------- Vendor Offers Section --------------------- */

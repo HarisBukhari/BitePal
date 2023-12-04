@@ -1,5 +1,5 @@
 import express from "express"
-import { AddToCart, CreateOrder, CreatePayment, CustomerLogin, CustomerProfile, CustomerSignUp, CustomerVerify, DeleteCart, GetCart, GetOrderById, GetOrders, GetTransactions, OTP, UpdateCutomerProfile, VerifyOffer,  } from "../controllers"
+import { AddToCart, CreateOrder, CreatePayment, CustomerLogin, CustomerProfile, CustomerSignUp, CustomerVerify, DeleteCart, GetCart, GetCustomerTransactions, GetOrderById, GetOrders, GetTransactions, OTP, UpdateCutomerProfile, VerifyOffer,  } from "../controllers"
 import { Authenticate } from "../middlewares"
 
 const router = express.Router()
@@ -36,7 +36,7 @@ router.delete('/cart', DeleteCart)
 router.post('/create-order', CreateOrder)
 router.get('/orders', GetOrders)
 router.get('/order/:id', GetOrderById)
-router.get('/orders/transactions', GetTransactions)
+router.get('/orders/transactions', GetCustomerTransactions)
 
 
 export { router as CustomerRoute }
