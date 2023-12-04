@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import { Customer, Food, Offer, Order, Transaction } from "../models"
+import { Customer, DeliveryUser, Food, Offer, Order, Transaction, Vendor } from "../models"
 import { plainToClass } from "class-transformer"
 import { validate } from "class-validator"
 import { generateOtop, generateSalt, generateSign, hashPassword, requestOtp, verifyPassword } from "../utilities"
@@ -343,7 +343,7 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
 
                 // await assignOrderForDelivery(currentOrder._id, vendorId)
                 const profileResponse = await profile.save()
-                return res.status(200).json(profileResponse)
+                return res.status(200).json(currentTransaction)
             }
         }
     } catch (error) {
@@ -461,3 +461,31 @@ export const CreatePayment = async (req: Request, res: Response, next: NextFunct
         return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
+
+const assignOrderForDelivery = async(orderId: string, vendorId: string) => {
+
+    // find the vendor
+    const vendor = await Vendor.findById(vendorId);
+    if(vendor){
+        const areaCode = vendor.pincode;
+        const vendorLat = vendor.lat;
+        const vendorLng = vendor.lng;
+
+        //find the available Delivery person
+        const deliveryPerson = await DeliveryUser.find({ pincode: areaCode, verified: true, isAvailable: true});
+        if(deliveryPerson){
+            // Check the nearest delivery person and assign the order
+
+            const currentOrder = await Order.findById(orderId);
+            if(currentOrder){
+                //update Delivery ID
+                currentOrder.deliveryId = deliveryPerson[0]._id; 
+                await currentOrder.save();
+
+                //Notify to vendor for received new order firebase push notification
+            }
+
+        }
+
+
+    }

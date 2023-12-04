@@ -268,6 +268,24 @@ export const ProcessOrder = async (req: Request, res: Response, next: NextFuncti
     }
 }
 
+/* ------------------- Vendor Transaction Section --------------------- */
+
+export const GetVendorTransactions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const vendor = req.User
+        if (vendor) {
+            const transactions = await Transaction.find({ vendorId: vendor._id })
+            if (transactions) {
+                return res.status(200).json(transactions)
+            }
+        }
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json({ msg: 'Transactions not found' })
+    }
+    return res.status(500).json({ message: 'Internal Server Error' })
+}
+
 /* ------------------- Vendor Offer Section --------------------- */
 
 export const GetOffers = async (req: Request, res: Response, next: NextFunction) => {
