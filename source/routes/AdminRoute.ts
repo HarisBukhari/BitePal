@@ -13,6 +13,6 @@ router.get('/transaction/:id', GetTransactionById)
 
 /* ------------------- Delivery User Section --------------------- */
 router.put('/delivery/verify', VerifyDeliveryUser)
-router.get('/delivery/users', GetDeliveryUsers);
+router.get('/delivery/users', GetDeliveryUsers)
 
 export { router as AdminRoute }

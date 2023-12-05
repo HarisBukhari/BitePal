@@ -1,21 +1,21 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose'
 
 
 export interface OfferDoc extends Document {
-    offerType: string;
-    vendors: [any];
-    title: string;
-    description: string;
-    minValue: number;
-    offerAmount: number;
-    startValidity: Date;
-    endValidity: Date;
-    promocode: string;
-    promoType: string;
-    bank: [any];
-    bins: [any];
-    pincode: string;
-    isActive: boolean;
+    offerType: string
+    vendors: [any]
+    title: string
+    description: string
+    minValue: number
+    offerAmount: number
+    startValidity: Date
+    endValidity: Date
+    promocode: string
+    promoType: string
+    bank: [any]
+    bins: [any]
+    pincode: string
+    isActive: boolean
 }
 
 
@@ -39,15 +39,15 @@ const OfferSchema = new Schema({
 }, {
     toJSON: {
         transform(doc, ret) {
-            delete ret.__v;
-            delete ret.createdAt;
-            delete ret.updatedAt;
+            delete ret.__v
+            delete ret.createdAt
+            delete ret.updatedAt
 
         }
     },
     timestamps: true
-});
+})
 
-const Offer = mongoose.model<OfferDoc>('offer', OfferSchema);
+const Offer = mongoose.model<OfferDoc>('offer', OfferSchema)
 
 export { Offer }

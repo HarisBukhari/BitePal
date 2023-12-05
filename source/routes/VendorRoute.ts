@@ -51,8 +51,8 @@ router.put('/order/:id/process',ProcessOrder)
 
 /* ------------------- Vendor Offers Section --------------------- */
 
-router.get('/offers', GetOffers);
-router.post('/offer', AddOffer);
+router.get('/offers', GetOffers)
+router.post('/offer', AddOffer)
 router.put('/offer/:id', EditOffer)
 
 export { router as VendorRoute }

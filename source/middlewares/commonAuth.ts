@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { validateSign } from '../utilities';
+import { validateSign } from '../utilities'
 
 
 export const Authenticate = async (req: Request, res: Response, next: NextFunction) => {

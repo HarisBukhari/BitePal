@@ -1,19 +1,19 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
-import { OrderDoc } from "./order";
+import mongoose, { Schema, Document, Model } from "mongoose"
+import { OrderDoc } from "./order"
 
 interface CustomerDoc extends Document {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    address: string;
-    phone: string;
-    salt: string;
-    verified: boolean;
-    otp: number;
-    otp_expiry: Date;
-    lat: number;
-    lng: number;
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+    address: string
+    phone: string
+    salt: string
+    verified: boolean
+    otp: number
+    otp_expiry: Date
+    lat: number
+    lng: number
     cart: [any],
     orders: [OrderDoc]
 }
@@ -44,11 +44,11 @@ const CustomerSchema = new Schema({
 }, {
     toJSON: {
         transform(doc, ret) {
-            delete ret.password;
-            delete ret.salt;
-            delete ret.__v;
-            delete ret.createdAt;
-            delete ret.updatedAt;
+            delete ret.password
+            delete ret.salt
+            delete ret.__v
+            delete ret.createdAt
+            delete ret.updatedAt
         }
     },
     timestamps: true

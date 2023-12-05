@@ -1,22 +1,21 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
-import { OrderDoc } from './order';
+import mongoose, { Schema, Document } from 'mongoose'
 
 
 interface DeliveryUserDoc extends Document {
-    email: string;
-    password: string;
-    salt: string;
-    firstName: string;
-    lastName: string;
-    address: string;
-    phone: string;
-    pincode: string;
-    verified: boolean;
-    otp: number;
-    otp_expiry: Date;
-    lat: number;
-    lng: number;
-    isAvailable: boolean;
+    email: string
+    password: string
+    salt: string
+    firstName: string
+    lastName: string
+    address: string
+    phone: string
+    pincode: string
+    verified: boolean
+    otp: number
+    otp_expiry: Date
+    lat: number
+    lng: number
+    isAvailable: boolean
 }
 
 
@@ -39,18 +38,18 @@ const DeliveryUserSchema = new Schema({
 },{
     toJSON: {
         transform(doc, ret){
-            delete ret.password;
-            delete ret.salt;
-            delete ret.__v;
-            delete ret.createdAt;
-            delete ret.updatedAt;
+            delete ret.password
+            delete ret.salt
+            delete ret.__v
+            delete ret.createdAt
+            delete ret.updatedAt
 
         }
     },
     timestamps: true
-});
+})
 
 
-const DeliveryUser = mongoose.model<DeliveryUserDoc>('deliveryUser', DeliveryUserSchema);
+const DeliveryUser = mongoose.model<DeliveryUserDoc>('deliveryUser', DeliveryUserSchema)
 
 export { DeliveryUser }

@@ -341,7 +341,7 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
                 currentTransaction.status = 'CONFIRMED'
                 await currentTransaction.save()
 
-                // await assignOrderForDelivery(currentOrder._id, vendorId)
+                await assignOrderForDelivery(currentOrder._id, vendorId)
                 const profileResponse = await profile.save()
                 return res.status(200).json(currentTransaction)
             }
@@ -387,6 +387,7 @@ export const GetOrderById = async (req: Request, res: Response, next: NextFuncti
     }
     return res.status(400).json({ msg: 'Order not found' })
 }
+
 
 export const GetCustomerTransactions = async (req: Request, res: Response, next: NextFunction) => {
     try {

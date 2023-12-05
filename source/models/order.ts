@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose'
 
 enum OrderStatus {
     Pending = 'Pending',
@@ -9,16 +9,16 @@ enum OrderStatus {
 }
 
 export interface OrderDoc extends Document {
-    orderId: string;
-    vendorId: string;
-    items: [any];
-    totalAmount: number;
-    paidAmount: number;
-    orderDate: Date;
-    orderStatus: OrderStatus;
-    remarks: string;
-    deliveryId: string;
-    readyTime: number;
+    orderId: string
+    vendorId: string
+    items: [any]
+    totalAmount: number
+    paidAmount: number
+    orderDate: Date
+    orderStatus: OrderStatus
+    remarks: string
+    deliveryId: string
+    readyTime: number
 }
 
 
@@ -46,16 +46,16 @@ const OrderSchema = new Schema({
 }, {
     toJSON: {
         transform(doc, ret) {
-            delete ret.__v;
-            delete ret.createdAt;
-            delete ret.updatedAt;
+            delete ret.__v
+            delete ret.createdAt
+            delete ret.updatedAt
 
         }
     },
     timestamps: true
-});
+})
 
 
-const Order = mongoose.model<OrderDoc>('order', OrderSchema);
+const Order = mongoose.model<OrderDoc>('order', OrderSchema)
 
 export { Order }

@@ -1,15 +1,15 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose'
 
 export interface TransactionDoc extends Document {
 
-    customer: string;
-    vendorId: string;
-    orderId: string;
-    orderValue: number;
-    offerUsed: string;
-    status: string;
-    paymentMode: string;
-    paymentResponse: string;
+    customer: string
+    vendorId: string
+    orderId: string
+    orderValue: number
+    offerUsed: string
+    status: string
+    paymentMode: string
+    paymentResponse: string
 
 }
 
@@ -26,13 +26,13 @@ const TransactionSchema = new Schema({
 },{
     toJSON: {
         transform(doc, ret){
-            delete ret.__v;
+            delete ret.__v
         }
     },
     timestamps: true
-});
+})
 
 
-const Transaction = mongoose.model<TransactionDoc>('transaction', TransactionSchema);
+const Transaction = mongoose.model<TransactionDoc>('transaction', TransactionSchema)
 
 export { Transaction }

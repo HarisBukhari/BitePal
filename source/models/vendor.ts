@@ -1,21 +1,21 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose"
 
 interface vendorDoc extends Document {
-    name: string;
-    ownerName: string;
-    foodType: [string];
-    pincode: string;
-    address: string;
-    phone: string;
-    email: string;
-    password: string;
-    salary: string;
-    serviceAvailable: boolean;
-    coverImage: [string];
-    rating: number;
-    foods: any;
-    lat: number;
-    lng: number;
+    name: string
+    ownerName: string
+    foodType: [string]
+    pincode: string
+    address: string
+    phone: string
+    email: string
+    password: string
+    salary: string
+    serviceAvailable: boolean
+    coverImage: [string]
+    rating: number
+    foods: any
+    lat: number
+    lng: number
 }
 
 const vendorSchema = new Schema({
@@ -37,11 +37,11 @@ const vendorSchema = new Schema({
 }, {
     toJSON: {
         transform(doc,ret){
-            delete ret.password;
-            delete ret.salt;
-            delete ret.__v;
-            delete ret.createdAt;
-            delete ret.updatedAt;
+            delete ret.password
+            delete ret.salt
+            delete ret.__v
+            delete ret.createdAt
+            delete ret.updatedAt
         }
     },
     timestamps: true

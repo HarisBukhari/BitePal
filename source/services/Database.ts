@@ -9,9 +9,9 @@ const options = {
 export default async () => {
     try {
         await mongoose.connect(mongoDB_URI, options as any)
-        console.log('Connected to MongoDB');
+        console.log('Connected to MongoDB')
     } catch (err) {
-        console.error('Error connecting to MongoDB:', err);
+        console.error('Error connecting to MongoDB:', err)
 
     }
 }
