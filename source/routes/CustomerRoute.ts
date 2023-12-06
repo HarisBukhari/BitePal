@@ -5,7 +5,6 @@ import { Authenticate } from "../middlewares"
 const router = express.Router()
 
 /* ------------------- Login/SignUp Section --------------------- */
-
 router.post('/signUp', CustomerSignUp)
 router.post('/login', CustomerLogin)
 

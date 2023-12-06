@@ -5,6 +5,18 @@ import { CreateDeliveryUserInput, CustomersLogin, EditCustomerInputs } from '../
 import { generateSign, hashPassword, verifyPassword, generateSalt } from "../utilities"
 import { DeliveryUser } from '../models'
 
+export const findDeliveryPerson = async (id: string | undefined, email?: string) => {
+    try {
+        if (email) {
+            return await DeliveryUser.findOne({ email: email })
+        } else {
+            return await DeliveryUser.findOne({ _id: id })
+        }
+    } catch (err) {
+        console.error('Find Vendor Database error:', err)
+    }
+}
+
 export const DeliverySignUp = async (req: Request, res: Response, next: NextFunction) => {
     const deliveryUserInputs = plainToClass(CreateDeliveryUserInput, req.body)
     const validationError = await validate(deliveryUserInputs, { validationError: { target: true } })
@@ -31,7 +43,6 @@ export const DeliverySignUp = async (req: Request, res: Response, next: NextFunc
         lat: 0,
         lng: 0,
     })
-
     if (result) {
         //Generate the Signature
         const signature = generateSign({
@@ -123,3 +134,4 @@ export const UpdateDeliveryUserStatus = async (req: Request, res: Response, next
     }
     return res.status(400).json({ msg: 'Error while Updating Profile' })
 }
+

@@ -4,6 +4,11 @@ import { Authenticate } from '../middlewares'
 
 const router = express.Router()
 
+router.get('/', (req, res) => {
+    res.send('Ook')
+})
+
+
 /* ------------------- Signup / Create Delivery Person --------------------- */
 router.post('/signup', DeliverySignUp)
 
