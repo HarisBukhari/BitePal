@@ -134,4 +134,3 @@ export const UpdateDeliveryUserStatus = async (req: Request, res: Response, next
     }
     return res.status(400).json({ msg: 'Error while Updating Profile' })
 }
-
