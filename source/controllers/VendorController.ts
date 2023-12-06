@@ -88,17 +88,15 @@ export const updateVendor = async (req: Request, res: Response, next: NextFuncti
 export const updateVendorService = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const vendor = req.User
+        const { lat, lng } = req.body
         if (vendor) {
             const vendorProfile = await (findVendor(vendor._id, ""))
             if (vendorProfile) {
                 vendorProfile.serviceAvailable = !vendorProfile.serviceAvailable
-                try {
-                    await vendorProfile.save()
-                    res.status(200).json(vendorProfile)
-                } catch (error) {
-                    console.error('Database error:', error)
-                    res.status(500).json({ message: 'Internal server error' })
-                }
+                vendorProfile.lat = lat
+                vendorProfile.lng = lng
+                await vendorProfile.save()
+                res.status(200).json(vendorProfile)
             } else {
                 res.status(404).json({ message: "Something went wrong" })
             }

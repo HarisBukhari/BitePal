@@ -29,7 +29,7 @@ export class EditCustomerInputs {
 export interface CustomerPayload {
     _id: string
     email: string
-    verified: string
+    verified: Boolean
 }
 
 export class CustomersLogin {

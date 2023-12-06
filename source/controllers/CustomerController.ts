@@ -50,7 +50,7 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
             const signature = generateSign({
                 _id: customer._id,
                 email: customer.email,
-                verified: customer.phone,
+                verified: false,
             })
             res.status(201).json(({
                 signature: signature,
@@ -82,7 +82,7 @@ export const CustomerLogin = async (req: Request, res: Response, next: NextFunct
                     const sign = generateSign({
                         _id: user._id,
                         email: user.email,
-                        verified: user.phone,
+                        verified: false,
                     })
                     return res.status(200).send({ token: sign })
                 }
