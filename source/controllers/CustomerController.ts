@@ -30,6 +30,10 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
         const { email, password, phone } = customerInputs
         const salt = await generateSalt()
         const userPassword = await hashPassword(password, salt)
+        const user = await findCustomer('', email)
+        if (user !== null) {
+            return res.status(400).json({ message: 'A Customer exist with the provided email ID!' })
+        }
         const { otp, otp_expiry } = generateOtop()
         const customer = await Customer.create({
             email: email,

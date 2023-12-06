@@ -4,6 +4,7 @@ import { CreateVendorInput } from "../dto"
 import { DeliveryUser, Transaction, Vendor } from "../models"
 import { generateSalt, hashPassword } from "../utilities"
 
+/* ------------------- Vendor Section --------------------- */
 
 export const findVendor = async (id: string | undefined, email?: string) => {
     try {
@@ -87,6 +88,7 @@ export const GetVendorById = async (req: Request, res: Response, next: NextFunct
     }
 }
 
+/* ------------------- Transaction Section --------------------- */
 
 export const GetTransactions = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -115,6 +117,8 @@ export const GetTransactionById = async (req: Request, res: Response, next: Next
         res.status(500).json({ message: 'Internal server error' })
     }
 }
+
+/* ------------------- Delivery Section --------------------- */
 
 export const VerifyDeliveryUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
