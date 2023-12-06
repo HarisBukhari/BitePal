@@ -25,16 +25,24 @@ const images = (0, multer_1.default)({ storage: imageStorage }).array('images', 
 router.get('/', (req, res, next) => {
     return res.json({ "data": "Hello From Vendor!" });
 });
-//Login
+/* ------------------- Vendor Login/Auth Section --------------------- */
 router.post('/login', controllers_1.login);
-//Authentication
 router.use(middlewares_1.Authenticate);
-//Vendor
+/* ------------------- Vendor Profile Section --------------------- */
 router.get('/profile', controllers_1.getVendor);
 router.patch('/update', controllers_1.updateVendor);
 router.patch('/update/service', controllers_1.updateVendorService);
 router.patch('/update/coverImage', images, controllers_1.updateVendorImage);
-//Food
+/* ------------------- Vendor Food Section --------------------- */
 router.post('/food', images, controllers_1.addFood);
 router.get('/food', controllers_1.getFoods);
+/* ------------------- Vendor Order Section --------------------- */
+router.get('/orders', controllers_1.GetCurrentOrders);
+router.get('/order/:id', controllers_1.GetOrderDetails);
+router.get('/orders/transaction', controllers_1.GetVendorTransactions);
+router.put('/order/:id/process', controllers_1.ProcessOrder);
+/* ------------------- Vendor Offers Section --------------------- */
+router.get('/offers', controllers_1.GetOffers);
+router.post('/offer', controllers_1.AddOffer);
+router.put('/offer/:id', controllers_1.EditOffer);
 //# sourceMappingURL=VendorRoute.js.map

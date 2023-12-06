@@ -16,7 +16,7 @@ exports.validateSign = exports.generateSign = exports.verifyPassword = exports.h
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("../config");
-// const saltRounds = 10; // You can adjust the number of salt rounds as needed.
+// const saltRounds = 10 // You can adjust the number of salt rounds as needed.
 //Function to generate salt
 const generateSalt = () => __awaiter(void 0, void 0, void 0, function* () {
     return yield bcrypt_1.default.genSalt();

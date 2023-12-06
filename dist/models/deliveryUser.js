@@ -23,40 +23,28 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Order = void 0;
+exports.DeliveryUser = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-var OrderStatus;
-(function (OrderStatus) {
-    OrderStatus["Pending"] = "Pending";
-    OrderStatus["Confirmed"] = "Confirmed";
-    OrderStatus["InProgress"] = "InProgress";
-    OrderStatus["Completed"] = "Completed";
-    OrderStatus["Cancelled"] = "Cancelled";
-})(OrderStatus || (OrderStatus = {}));
-const OrderSchema = new mongoose_1.Schema({
-    orderId: { type: String, require: true },
-    vendorId: { type: String, require: true },
-    items: [
-        {
-            food: { type: mongoose_1.Schema.Types.ObjectId, ref: "food", require: true },
-            unit: { type: Number, require: true }
-        }
-    ],
-    totalAmount: { type: Number, require: true },
-    paidAmount: { type: Number, require: true },
-    orderDate: { type: Date },
-    orderStatus: {
-        type: String,
-        required: true,
-        enum: Object.values(OrderStatus),
-        default: OrderStatus.Pending,
-    },
-    remarks: { type: String },
-    deliveryId: { type: String },
-    readyTime: { type: Number },
+const DeliveryUserSchema = new mongoose_1.Schema({
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    salt: { type: String, required: true },
+    firstName: { type: String },
+    lastName: { type: String },
+    address: { type: String },
+    phone: { type: String, required: true },
+    pincode: { type: String },
+    verified: { type: Boolean },
+    otp: { type: Number },
+    otp_expiry: { type: Date },
+    lat: { type: Number },
+    lng: { type: Number },
+    isAvailable: { type: Boolean, default: false }
 }, {
     toJSON: {
         transform(doc, ret) {
+            delete ret.password;
+            delete ret.salt;
             delete ret.__v;
             delete ret.createdAt;
             delete ret.updatedAt;
@@ -64,6 +52,6 @@ const OrderSchema = new mongoose_1.Schema({
     },
     timestamps: true
 });
-const Order = mongoose_1.default.model('order', OrderSchema);
-exports.Order = Order;
-//# sourceMappingURL=order.js.map
+const DeliveryUser = mongoose_1.default.model('deliveryUser', DeliveryUserSchema);
+exports.DeliveryUser = DeliveryUser;
+//# sourceMappingURL=deliveryUser.js.map

@@ -23,37 +23,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Order = void 0;
+exports.Offer = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-var OrderStatus;
-(function (OrderStatus) {
-    OrderStatus["Pending"] = "Pending";
-    OrderStatus["Confirmed"] = "Confirmed";
-    OrderStatus["InProgress"] = "InProgress";
-    OrderStatus["Completed"] = "Completed";
-    OrderStatus["Cancelled"] = "Cancelled";
-})(OrderStatus || (OrderStatus = {}));
-const OrderSchema = new mongoose_1.Schema({
-    orderId: { type: String, require: true },
-    vendorId: { type: String, require: true },
-    items: [
-        {
-            food: { type: mongoose_1.Schema.Types.ObjectId, ref: "food", require: true },
-            unit: { type: Number, require: true }
-        }
+const OfferSchema = new mongoose_1.Schema({
+    offerType: { type: String, require: true },
+    vendors: [
+        { type: mongoose_1.Schema.Types.ObjectId, ref: 'vendor' },
     ],
-    totalAmount: { type: Number, require: true },
-    paidAmount: { type: Number, require: true },
-    orderDate: { type: Date },
-    orderStatus: {
-        type: String,
-        required: true,
-        enum: Object.values(OrderStatus),
-        default: OrderStatus.Pending,
-    },
-    remarks: { type: String },
-    deliveryId: { type: String },
-    readyTime: { type: Number },
+    title: { type: String, require: true },
+    description: { type: String },
+    minValue: { type: Number, require: true },
+    offerAmount: { type: Number, require: true },
+    startValidity: Date,
+    endValidity: Date,
+    promocode: { type: String, require: true },
+    promoType: { type: String, require: true },
+    bank: [{ type: String }],
+    bins: [{ type: Number }],
+    pincode: { type: String, require: true },
+    isActive: Boolean
 }, {
     toJSON: {
         transform(doc, ret) {
@@ -64,6 +52,6 @@ const OrderSchema = new mongoose_1.Schema({
     },
     timestamps: true
 });
-const Order = mongoose_1.default.model('order', OrderSchema);
-exports.Order = Order;
-//# sourceMappingURL=order.js.map
+const Offer = mongoose_1.default.model('offer', OfferSchema);
+exports.Offer = Offer;
+//# sourceMappingURL=offer.js.map

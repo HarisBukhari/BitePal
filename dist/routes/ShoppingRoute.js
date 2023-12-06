@@ -8,14 +8,7 @@ const express_1 = __importDefault(require("express"));
 const controllers_1 = require("../controllers");
 const router = express_1.default.Router();
 exports.ShoppingRoute = router;
-router.get('/', (req, res, next) => {
-    return res.json({ "data": "Hello From Vendor!" });
-});
-//Login
-// router.post('/login', login)
-//Authentication
-// router.use(Authenticate)
-//Vendor
+/* ------------------- Restaurants Section --------------------- */
 router.get('/:pincode', controllers_1.GetFoodAvailability);
 router.get('/top-restaurants/:pincode', controllers_1.GetTopRestaurants);
 router.get('/foods-in-30-min/:pincode', controllers_1.GetFoodIn30Min);

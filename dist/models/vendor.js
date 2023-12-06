@@ -38,7 +38,9 @@ const vendorSchema = new mongoose_1.Schema({
     serviceAvailable: { type: Boolean },
     coverImage: { type: [String] },
     rating: { type: Number },
-    foods: [{ type: mongoose_1.default.SchemaTypes.ObjectId, ref: 'food' }]
+    foods: [{ type: mongoose_1.default.SchemaTypes.ObjectId, ref: 'food' }],
+    lat: { type: Number },
+    lng: { type: Number }
 }, {
     toJSON: {
         transform(doc, ret) {

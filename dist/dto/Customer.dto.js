@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrderInputs = exports.CartItem = exports.CustomersLogin = exports.EditCustomerInputs = exports.CreateCustomerInputs = void 0;
+exports.CreateDeliveryUserInput = exports.OrderInputs = exports.CartItem = exports.CustomersLogin = exports.EditCustomerInputs = exports.CreateCustomerInputs = void 0;
 const class_validator_1 = require("class-validator");
 class CreateCustomerInputs {
 }
@@ -58,4 +58,35 @@ exports.CartItem = CartItem;
 class OrderInputs {
 }
 exports.OrderInputs = OrderInputs;
+class CreateDeliveryUserInput {
+}
+exports.CreateDeliveryUserInput = CreateDeliveryUserInput;
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], CreateDeliveryUserInput.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.Length)(7, 12),
+    __metadata("design:type", String)
+], CreateDeliveryUserInput.prototype, "phone", void 0);
+__decorate([
+    (0, class_validator_1.Length)(6, 12),
+    __metadata("design:type", String)
+], CreateDeliveryUserInput.prototype, "password", void 0);
+__decorate([
+    (0, class_validator_1.Length)(3, 12),
+    __metadata("design:type", String)
+], CreateDeliveryUserInput.prototype, "firstName", void 0);
+__decorate([
+    (0, class_validator_1.Length)(3, 12),
+    __metadata("design:type", String)
+], CreateDeliveryUserInput.prototype, "lastName", void 0);
+__decorate([
+    (0, class_validator_1.Length)(6, 24),
+    __metadata("design:type", String)
+], CreateDeliveryUserInput.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.Length)(4, 12),
+    __metadata("design:type", String)
+], CreateDeliveryUserInput.prototype, "pincode", void 0);
 //# sourceMappingURL=Customer.dto.js.map

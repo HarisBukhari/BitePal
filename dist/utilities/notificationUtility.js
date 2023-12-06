@@ -25,7 +25,7 @@ const requestOtp = (otp, to) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const client = require('twilio')(T_ID, T_Token);
         const response = yield client.messages.create({
-            body: `Farig Yeah Lai Apni OTP ${otp}`,
+            body: `Your OTP is ${otp}`,
             from: '+12394490950',
             to: `+92${to}`
         });
