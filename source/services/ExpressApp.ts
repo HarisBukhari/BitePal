@@ -10,5 +10,6 @@ export default async (app: Application) => {
     app.use("/vendor", VendorRoute)
     app.use("/shopping", ShoppingRoute)
     app.use("/customer", CustomerRoute)
+    app.use("/deliveryPerson", CustomerRoute)
     return app
 }
