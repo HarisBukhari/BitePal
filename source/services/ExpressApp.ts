@@ -5,6 +5,7 @@ import helmet from "helmet"
 import cors from "cors"
 import xss from "xss-clean"
 import rateLimiter from "express-rate-limit"
+import {html} from "../utilities"
 import { ErrorHandler, errorHandlerMiddleware } from "../middlewares"
 
 export default async (app: Application) => {
@@ -36,7 +37,7 @@ export default async (app: Application) => {
     //Document
     app.get('*', (req: Request, res: Response, next: NextFunction) => {
         const postmanDocURL = 'https://documenter.getpostman.com/view/22277285/2s9YeN2U1H'
-        res.redirect(postmanDocURL)
+        res.send(html)
     })
 
     return app
