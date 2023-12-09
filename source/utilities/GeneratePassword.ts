@@ -33,7 +33,7 @@ export const validateSign = async (req: Request) => {
             req.User = payload
             return true
         } catch (err) {
-            console.log("Utilities/GeneratePassword/validateSign")
+            console.log({msg: "[Utilities/GeneratePassword/validateSign] Token Error"})
             return false
         }
     }
