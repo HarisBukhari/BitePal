@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { Vendor, foodDoc } from '../models'
+import { NotFoundError } from '../error'
 
 
 export const GetFoodAvailability = async (req: Request, res: Response, next: NextFunction) => {
@@ -10,12 +11,10 @@ export const GetFoodAvailability = async (req: Request, res: Response, next: Nex
             .populate("foods")
         if (result.length > 0) {
             res.status(200).json(result)
-        } else {
-            res.status(400).json({ message: "No Data Available" })
         }
+        throw new NotFoundError('Vendors Not Found!', 'Shopping/GetFoodAvailability')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -28,12 +27,10 @@ export const GetTopRestaurants = async (req: Request, res: Response, next: NextF
             .limit(10)
         if (result.length > 0) {
             res.status(200).json(result)
-        } else {
-            res.status(400).json({ message: "No Data Available" })
         }
+        throw new NotFoundError('Vendors Not Found!', 'Shopping/GetTopRestaurants')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 export const GetFoodIn30Min = async (req: Request, res: Response, next: NextFunction) => {
@@ -48,12 +45,10 @@ export const GetFoodIn30Min = async (req: Request, res: Response, next: NextFunc
                 foodResult.push(...food.filter(food => food.readyTime <= 30))
             })
             res.status(200).json(foodResult)
-        } else {
-            res.status(400).json({ message: "No Data Available" })
         }
+        throw new NotFoundError('Vendors Not Found!', 'Shopping/GetFoodIn30Min')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -70,12 +65,11 @@ export const SearchFoods = async (req: Request, res: Response, next: NextFunctio
                 foodResult.push(...food)
             })
             res.status(200).json(foodResult)
-        } else {
-            res.status(400).json({ message: "No Data Available" })
         }
+        throw new NotFoundError('Vendors Not Found!', 'Shopping/SearchFoods')
+
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -87,11 +81,9 @@ export const RestuarantsByID = async (req: Request, res: Response, next: NextFun
             .populate("foods")
         if (result) {
             res.status(200).json(result)
-        } else {
-            res.status(400).json({ message: "No Data Available" })
         }
+        throw new NotFoundError('Vendors Not Found!', 'Shopping/RestuarantsByID')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }

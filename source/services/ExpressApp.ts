@@ -5,8 +5,10 @@ import helmet from "helmet"
 import cors from "cors"
 import xss from "xss-clean"
 import rateLimiter from "express-rate-limit"
+import { ErrorHandler, errorHandlerMiddleware } from "../middlewares"
 
 export default async (app: Application) => {
+
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
     app.set('trust proxy', 1)
@@ -26,7 +28,11 @@ export default async (app: Application) => {
     app.use("/shopping", ShoppingRoute)
     app.use("/customer", CustomerRoute)
     app.use("/deliveryPerson", DeliveryRoute)
-    
+
+    //Error Middleware
+    app.use(errorHandlerMiddleware)
+    // app.use(ErrorHandler)
+
     //Document
     app.get('*', (req: Request, res: Response, next: NextFunction) => {
         const postmanDocURL = 'https://documenter.getpostman.com/view/22277285/2s9YeN2U1H'

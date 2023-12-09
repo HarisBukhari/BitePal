@@ -3,6 +3,7 @@ import { UpdateVendor, VendorLogin, CreateFoodInput, CreateOfferInputs } from ".
 import { findVendor } from "."
 import { generateSign, verifyPassword } from "../utilities"
 import { Food, Offer, Order, Transaction } from "../models"
+import { BadRequestError, CustomError, NotFoundError } from "../error"
 
 
 /* ------------------- Vendor Profile Section --------------------- */
@@ -23,14 +24,13 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
                     })
                     return res.status(200).send({ token: sign })
                 }
-                return res.status(400).send({ message: "Please enter correct email and password" })
+                throw new CustomError('Invalid Inputs', 'Vendor/VendorLogin')
             }
-            return res.status(204).send({ message: "Vendor not found" })
+            throw new NotFoundError('Vendor Not Found', 'Vendor/VendorLogin')
         }
-        return res.status(400).send({ message: "Please enter your email and password" })
+        throw new BadRequestError('Please enter your email and password', 'Vendor/VendorLogin')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -42,15 +42,12 @@ export const getVendor = async (req: Request, res: Response, next: NextFunction)
             const vendorProfile = await (findVendor(vendor._id, ""))
             if (vendorProfile) {
                 res.status(200).json(vendorProfile)
-            } else {
-                res.status(404).json({ message: "Something went wrong" })
             }
-        } else {
-            res.status(404).json({ message: "Something went wrong" })
+            throw new CustomError('Something Went Wrong', 'Vendor/getVendor')
         }
+        throw new NotFoundError('Vendor Not Found', 'Vendor/getVendor')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -66,22 +63,14 @@ export const updateVendor = async (req: Request, res: Response, next: NextFuncti
                 vendorProfile.name = name
                 vendorProfile.address = address
                 vendorProfile.phone = phone
-                try {
-                    await vendorProfile.save()
-                    res.status(200).json(vendorProfile)
-                } catch (error) {
-                    console.error('Database error:', error)
-                    res.status(500).json({ message: 'Internal server error' })
-                }
-            } else {
-                res.status(404).json({ message: "Something went wrong" })
+                await vendorProfile.save()
+                res.status(200).json(vendorProfile)
             }
-        } else {
-            res.status(404).json({ message: "Something went wrong" })
+            throw new CustomError('Something Went Wrong', 'Vendor/updateVendor')
         }
+        throw new NotFoundError('Vendor Not Found', 'Vendor/updateVendor')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -97,15 +86,12 @@ export const updateVendorService = async (req: Request, res: Response, next: Nex
                 vendorProfile.lng = lng
                 await vendorProfile.save()
                 res.status(200).json(vendorProfile)
-            } else {
-                res.status(404).json({ message: "Something went wrong" })
             }
-        } else {
-            res.status(404).json({ message: "Something went wrong" })
+            throw new CustomError('Something Went Wrong', 'Vendor/updateVendorService')
         }
+        throw new NotFoundError('Vendor Not Found', 'Vendor/updateVendorService')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -115,26 +101,17 @@ export const updateVendorImage = async (req: Request, res: Response, next: NextF
         if (vendor) {
             const vendorProfile = await (findVendor(vendor._id, ""))
             if (vendorProfile) {
-                //Here
-                try {
-                    const files = req.files as [Express.Multer.File]
-                    const images = files.map((file: Express.Multer.File) => file.filename)
-                    vendorProfile.coverImage.push(...images)
-                    await vendorProfile.save()
-                    return res.status(201).json({ "success": vendorProfile })
-                } catch (error) {
-                    console.error('Database error:', error)
-                    res.status(500).json({ message: 'Internal server error' })
-                }
-            } else {
-                res.status(404).json({ message: "Something went wrong" })
+                const files = req.files as [Express.Multer.File]
+                const images = files.map((file: Express.Multer.File) => file.filename)
+                vendorProfile.coverImage.push(...images)
+                await vendorProfile.save()
+                return res.status(201).json({ "success": vendorProfile })
             }
-        } else {
-            res.status(404).json({ message: "Something went wrong" })
+            throw new CustomError('Something Went Wrong', 'Vendor/updateVendorImage')
         }
+        throw new NotFoundError('Vendor Not Found', 'Vendor/updateVendorImage')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -148,36 +125,28 @@ export const addFood = async (req: Request, res: Response, next: NextFunction) =
             if (vendorProfile) {
                 //Here
                 const { name, category, description, foodType, price, readyTime } = <CreateFoodInput>req.body
-                try {
-                    const files = req.files as [Express.Multer.File]
-                    const images = files.map((file: Express.Multer.File) => file.filename)
-                    const food = await Food.create({
-                        vendorId: vendorProfile._id,
-                        name: name,
-                        category: category,
-                        description: description,
-                        foodType: foodType,
-                        price: price,
-                        readyTime: readyTime,
-                        rating: 0,
-                        image: images
-                    })
-                    vendorProfile.foods.push(food)
-                    await vendorProfile.save()
-                    return res.status(201).json({ "success": vendorProfile })
-                } catch (error) {
-                    console.error('Database error:', error)
-                    res.status(500).json({ message: 'Internal server error' })
-                }
-            } else {
-                res.status(404).json({ message: "Something went wrong" })
+                const files = req.files as [Express.Multer.File]
+                const images = files.map((file: Express.Multer.File) => file.filename)
+                const food = await Food.create({
+                    vendorId: vendorProfile._id,
+                    name: name,
+                    category: category,
+                    description: description,
+                    foodType: foodType,
+                    price: price,
+                    readyTime: readyTime,
+                    rating: 0,
+                    image: images
+                })
+                vendorProfile.foods.push(food)
+                await vendorProfile.save()
+                return res.status(201).json({ "success": vendorProfile })
             }
-        } else {
-            res.status(404).json({ message: "Something went wrong" })
+            throw new CustomError('Something Went Wrong', 'Vendor/addFood')
         }
+        throw new NotFoundError('Vendor Not Found', 'Vendor/addFood')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -187,24 +156,18 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
         if (vendor) {
             const vendorProfile = await (findVendor(vendor._id, ""))
             if (vendorProfile) {
-                try {
-                    const foods = await Food.find({ vendorId: vendorProfile.id })
-                    if (foods.length > 0) {
-                        res.status(200).json(foods)
-                    } else {
-                        res.status(404).json({ message: '404 what else you can expect' })
-                    }
-                } catch (err) {
-                    console.error('Database error:', err)
-                    res.status(500).json({ message: 'Internal server error' })
+                const foods = await Food.find({ vendorId: vendorProfile.id })
+                if (foods.length > 0) {
+                    res.status(200).json(foods)
+                } else {
+                    res.status(404).json({ message: '404 what else you can expect' })
                 }
-            } else {
-                res.status(404).json({ message: "! Something went wrong" })
             }
+            throw new CustomError('Something Went Wrong', 'Vendor/getFoods')
         }
+        throw new NotFoundError('Vendor Not Found', 'Vendor/getFoods')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -219,11 +182,11 @@ export const GetCurrentOrders = async (req: Request, res: Response, next: NextFu
             if (orders != null) {
                 return res.status(200).json(orders)
             }
+            throw new CustomError('Something Went Wrong', 'Vendor/GetCurrentOrders')
         }
-        return res.json({ message: 'Orders Not found' })
+        throw new NotFoundError('Orders Not Found', 'Vendor/GetCurrentOrders')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -235,11 +198,11 @@ export const GetOrderDetails = async (req: Request, res: Response, next: NextFun
             if (order != null) {
                 return res.status(200).json(order)
             }
+            throw new CustomError('Something Went Wrong', 'Vendor/GetOrderDetails')
         }
-        return res.json({ message: 'Order Not found' })
+        throw new NotFoundError('Orders Not Found', 'Vendor/GetOrderDetails')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -258,11 +221,11 @@ export const ProcessOrder = async (req: Request, res: Response, next: NextFuncti
             if (orderResult != null) {
                 return res.status(200).json(orderResult)
             }
+            throw new CustomError('Something Went Wrong', 'Vendor/ProcessOrder')
         }
-        return res.json({ message: 'Unable to process order' })
+        throw new NotFoundError('Orders Not Found', 'Vendor/ProcessOrder')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -276,12 +239,12 @@ export const GetVendorTransactions = async (req: Request, res: Response, next: N
             if (transactions) {
                 return res.status(200).json(transactions)
             }
+            throw new CustomError('Something Went Wrong', 'Vendor/GetVendorTransactions')
         }
-    } catch (error) {
-        console.error(error)
-        return res.status(400).json({ msg: 'Transactions not found' })
+        throw new NotFoundError('Vendor Not Found', 'Vendor/GetVendorTransactions')
+    } catch (err) {
+        next(err)
     }
-    return res.status(500).json({ message: 'Internal Server Error' })
 }
 
 /* ------------------- Vendor Offer Section --------------------- */
@@ -306,25 +269,24 @@ export const GetOffers = async (req: Request, res: Response, next: NextFunction)
                     }
                 })
             }
-            return res.status(200).json(currentOffer)
+            throw new CustomError('Something Went Wrong', 'Vendor/GetOffers')
         }
-        return res.json({ message: 'Offers Not available' })
+        throw new NotFoundError('Vendor Not Found', 'Vendor/GetOffers')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
 
 export const AddOffer = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = req.User
-        if (user) {
+        const vendor = req.User
+        if (vendor) {
             const { title, description, offerType, offerAmount, pincode,
                 promocode, promoType, startValidity, endValidity, bank,
                 bins, minValue, isActive } = <CreateOfferInputs>req.body
-            const vendor = await findVendor(user._id)
-            if (vendor) {
+            const validVendor = await findVendor(vendor._id)
+            if (validVendor) {
                 const offer = await Offer.create({
                     title,
                     description,
@@ -339,13 +301,16 @@ export const AddOffer = async (req: Request, res: Response, next: NextFunction) 
                     minValue,
                     vendors: [vendor]
                 })
-                return res.status(200).json(offer)
+                if (offer) {
+                    return res.status(200).json(offer)
+                }
+                throw new CustomError('Something Went Wrong', 'Vendor/AddOffer')
             }
+            throw new NotFoundError('Vendor Not Found', 'Vendor/AddOffer')
         }
-        return res.json({ message: 'Unable to add Offer!' })
+        throw new BadRequestError('Invalid Inputs', 'Vendor/AddOffer')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -373,13 +338,17 @@ export const EditOffer = async (req: Request, res: Response, next: NextFunction)
                         currentOffer.isActive = isActive,
                         currentOffer.minValue = minValue
                     const result = await currentOffer.save()
-                    return res.status(200).json(result)
+                    if (result) {
+                        return res.status(200).json(result)
+                    }
+                    throw new CustomError('Something Went Wrong', 'Vendor/EditOffer')
                 }
+                throw new NotFoundError('Vendor Not Found', 'Vendor/EditOffer')
             }
+            throw new NotFoundError('Vendor Not Found', 'Vendor/EditOffer')
         }
-        return res.json({ message: 'Unable to add Offer!' })
+        throw new BadRequestError('Invalid Inputs', 'Vendor/EditOffer')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }

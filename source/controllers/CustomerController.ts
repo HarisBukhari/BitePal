@@ -4,6 +4,7 @@ import { plainToClass } from "class-transformer"
 import { validate } from "class-validator"
 import { generateOtop, generateSalt, generateSign, hashPassword, requestOtp, verifyPassword } from "../utilities"
 import { CartItem, CreateCustomerInputs, CustomersLogin, EditCustomerInputs, OrderInputs } from "../dto"
+import { BadRequestError, CustomError, NotFoundError } from "../error"
 
 
 /* ------------------- Customer Profile Section --------------------- */
@@ -12,11 +13,16 @@ export const findCustomer = async (id: string | undefined, email?: string) => {
     try {
         if (email) {
             return await Customer.findOne({ email: email })
-        } else {
+        }
+        if (id) {
             return await Customer.findOne({ _id: id })
         }
+        throw new BadRequestError('Invalid inputs', 'Customer/findCustomer')
     } catch (err) {
-        console.error('Database error:', err)
+        if (err instanceof BadRequestError) {
+            throw err
+        }
+        throw new CustomError('An unexpected error occurred', 'Customer/findCustomer')
     }
 }
 
@@ -25,14 +31,14 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
         const customerInputs = plainToClass(CreateCustomerInputs, req.body)
         const inputErrors = await validate(customerInputs, { validationError: { target: true } })
         if (inputErrors.length > 0) {
-            return res.status(400).json(inputErrors)
+            throw new BadRequestError('Input validation error', 'Customer/SignUp')
         }
         const { email, password, phone } = customerInputs
         const salt = await generateSalt()
         const userPassword = await hashPassword(password, salt)
         const user = await findCustomer('', email)
         if (user !== null) {
-            return res.status(400).json({ message: 'A Customer exist with the provided email ID!' })
+            throw new BadRequestError('A Customer exist with the provided email ID', 'Customer/SignUp')
         }
         const { otp, otp_expiry } = generateOtop()
         const customer = await Customer.create({
@@ -62,11 +68,10 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
                 email: customer.email
             }))
         } else {
-            res.status(400).json({ err: "Something went wrong" })
+            throw new CustomError('Database Error', 'Customer/Signup')
         }
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -75,7 +80,7 @@ export const CustomerLogin = async (req: Request, res: Response, next: NextFunct
         const customerInputs = plainToClass(CustomersLogin, req.body)
         const inputErrors = await validate(customerInputs, { validationError: { target: true } })
         if (inputErrors.length > 0) {
-            return res.status(400).json(inputErrors)
+            throw new BadRequestError('Input validation error', 'Customer/CustomerLogin')
         }
         const { email, password } = customerInputs
         if (email && password) {
@@ -90,14 +95,13 @@ export const CustomerLogin = async (req: Request, res: Response, next: NextFunct
                     })
                     return res.status(200).send({ token: sign })
                 }
-                return res.status(400).send({ message: "Please enter correct email and password" })
+                throw new BadRequestError('Input validation error', 'Customer/CustomerLogin')
             }
-            return res.status(204).send({ message: "Vendor not found" })
+            throw new NotFoundError('Input validation error', 'Customer/CustomerLogin')
         }
-        return res.status(400).send({ message: "Please enter your email and password" })
+        throw new BadRequestError('Input validation error', 'Customer/CustomerLogin')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -112,18 +116,14 @@ export const CustomerVerify = async (req: Request, res: Response, next: NextFunc
                     customerProfile.verified = true
                     await customerProfile.save()
                     res.status(200).json(customerProfile)
-                } else {
-                    res.status(404).json({ message: "Otp Failed!" })
                 }
-            } else {
-                res.status(404).json({ message: "Something went wrong!" })
+                throw new BadRequestError('Otp Failed', 'Customer/CustomerVerify')
             }
-        } else {
-            res.status(404).json({ message: "Something went wrong" })
+            throw new NotFoundError('Customer not Found', 'Customer/CustomerVerify')
         }
+        throw new BadRequestError('Invalid Customer', 'Customer/CustomerVerify')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -140,13 +140,12 @@ export const OTP = async (req: Request, res: Response, next: NextFunction) => {
                 await customerProfile.save()
                 res.status(200).json(customerProfile.otp)
             }
+            throw new NotFoundError('Customer not Found', 'Customer/Otp')
         }
-
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Internal Server Error' })
+        throw new BadRequestError('Invalid Customer', 'Customer/Otp')
+    } catch (err) {
+        next(err)
     }
-
 }
 
 export const CustomerProfile = async (req: Request, res: Response, next: NextFunction) => {
@@ -156,15 +155,12 @@ export const CustomerProfile = async (req: Request, res: Response, next: NextFun
             const customerProfile = await (findCustomer(customer._id, ""))
             if (customerProfile) {
                 res.status(200).json(customerProfile)
-            } else {
-                res.status(404).json({ message: "Something went wrong!" })
             }
-        } else {
-            res.status(404).json({ message: "Something went wrong" })
+            throw new NotFoundError('Customer not Found', 'Customer/CustomerProfile')
         }
+        throw new BadRequestError('Invalid Customer', 'Customer/CustomerProfile')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -173,7 +169,7 @@ export const UpdateCutomerProfile = async (req: Request, res: Response, next: Ne
         const customerInputs = plainToClass(EditCustomerInputs, req.body)
         const inputErrors = await validate(customerInputs, { validationError: { target: true } })
         if (inputErrors.length > 0) {
-            return res.status(400).json(inputErrors)
+            throw new BadRequestError('Invalid inputs', 'Customer/UpdateCutomerProfile')
         }
         const customer = req.User
         const { firstName, lastName, address } = customerInputs
@@ -183,22 +179,14 @@ export const UpdateCutomerProfile = async (req: Request, res: Response, next: Ne
                 customerProfile.firstName = firstName
                 customerProfile.lastName = lastName
                 customerProfile.address = address
-                try {
-                    await customerProfile.save()
-                    res.status(200).json(customerProfile)
-                } catch (error) {
-                    console.error('Database error:', error)
-                    res.status(500).json({ message: 'Internal server error' })
-                }
-            } else {
-                res.status(404).json({ message: "Something went wrong!" })
+                await customerProfile.save()
+                res.status(200).json(customerProfile)
             }
-        } else {
-            res.status(404).json({ message: "Something went wrong" })
+            throw new NotFoundError('Customer not found', 'Customer/UpdateCutomerProfile')
         }
+        throw new BadRequestError('Invalid Customer', 'Customer/UpdateCutomerProfile')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -238,14 +226,16 @@ export const AddToCart = async (req: Request, res: Response, next: NextFunction)
                         const cartResult = await profile.save()
                         return res.status(200).json(cartResult.cart)
                     }
+                    throw new CustomError('Unable to add to cart!', 'Customer/AddtoCart')
                 }
+                throw new NotFoundError('Customer not found', 'Customer/AddtoCart')
             }
+            throw new NotFoundError('Food not found', 'Customer/AddtoCart')
         }
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Internal Server Error' })
+        throw new BadRequestError('Invalid Customer', 'Customer/AddtoCart')
+    } catch (err) {
+        next(err)
     }
-    return res.status(404).json({ msg: 'Unable to add to cart!' })
 }
 
 export const GetCart = async (req: Request, res: Response, next: NextFunction) => {
@@ -256,11 +246,11 @@ export const GetCart = async (req: Request, res: Response, next: NextFunction) =
             if (profile) {
                 return res.status(200).json(profile.cart)
             }
+            throw new NotFoundError('Customer not found', 'Customer/GetCart')
         }
-        return res.status(400).json({ message: 'Cart is Empty!' })
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Internal Server Error' })
+        throw new BadRequestError('Invalid Customer', 'Customer/GetCart')
+    } catch (err) {
+        next(err)
     }
 }
 
@@ -275,11 +265,11 @@ export const DeleteCart = async (req: Request, res: Response, next: NextFunction
                 const cartResult = await profile.save()
                 return res.status(200).json(cartResult)
             }
+            throw new NotFoundError('Customer not found', 'Customer/DeleteCart')
         }
-        return res.status(400).json({ message: 'Cart Is Already Empty!' })
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Internal Server Error' })
+        throw new BadRequestError('Invalid Customer', 'Customer/DeleteCart')
+    } catch (err) {
+        next(err)
     }
 }
 
@@ -296,7 +286,7 @@ const validateTransaction = async (txnId: string) => {
         }
         return { status: false, currentTransaction }
     } catch (err) {
-        console.error('Database error:', err)
+        throw new CustomError('Database Error', 'Customer/validateTransaction')
     }
 }
 
@@ -307,14 +297,14 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
         if (customer) {
             const { status, currentTransaction } = await validateTransaction(txnId)
             if (!status) {
-                return res.status(404).json({ message: 'Error while Creating Order!' })
+                throw new BadRequestError('Error while creating Order', 'Customer/createOrder')
             }
             const profile = await Customer.findById(customer._id)
             const orderId = `${Math.floor(Math.random() * 89999) + 1000}`
             const cart = <[CartItem]>items
             let cartItems = Array()
             let netAmount = 0.0
-            let vendorId
+            let vendorId: string
             const foods = await Food.find().where('_id').in(cart.map(item => item._id))
             foods.map(food => {
                 cart.map(({ _id, unit }) => {
@@ -344,18 +334,16 @@ export const CreateOrder = async (req: Request, res: Response, next: NextFunctio
                 currentTransaction.orderId = orderId
                 currentTransaction.status = 'CONFIRMED'
                 await currentTransaction.save()
-
                 await assignOrderForDelivery(currentOrder._id, vendorId)
                 const profileResponse = await profile.save()
                 return res.status(200).json(currentTransaction)
             }
+            throw new CustomError('Cart items not found', 'Customer/CreateOrder')
         }
-    } catch (error) {
-        console.error(error)
-        return res.status(400).json({ msg: 'Error while Creating Order' })
+        throw new BadRequestError('Invalid Customer', 'Customer/CreateOrder')
+    } catch (err) {
+        next(err)
     }
-    return res.status(500).json({ message: 'Internal Server Error' })
-
 }
 
 
@@ -367,12 +355,12 @@ export const GetOrders = async (req: Request, res: Response, next: NextFunction)
             if (profile) {
                 return res.status(200).json(profile.orders)
             }
+            throw new NotFoundError('Customer not found', 'Customer/GetOrders')
         }
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Internal Server Error' })
+        throw new BadRequestError('Invalid Customer', 'Customer/GetOrders')
+    } catch (err) {
+        next(err)
     }
-    return res.status(400).json({ msg: 'Orders not found' })
 }
 
 
@@ -385,9 +373,9 @@ export const GetOrderById = async (req: Request, res: Response, next: NextFuncti
                 return res.status(200).json(order)
             }
         }
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Internal Server Error' })
+        throw new BadRequestError('Invalid Order ID', 'Customer/GetOrderById')
+    } catch (err) {
+        next(err)
     }
     return res.status(400).json({ msg: 'Order not found' })
 }
@@ -401,12 +389,12 @@ export const GetCustomerTransactions = async (req: Request, res: Response, next:
             if (transactions) {
                 return res.status(200).json(transactions)
             }
+            throw new NotFoundError('Transaction not found', 'Customer/GetCustomerTransactions')
         }
-    } catch (error) {
-        console.error(error)
-        return res.status(400).json({ msg: 'Transactions not found' })
+        throw new BadRequestError('Invalid Customer', 'Customer/GetCustomerTransactions')
+    } catch (err) {
+        next(err)
     }
-    return res.status(500).json({ message: 'Internal Server Error' })
 }
 
 
@@ -423,11 +411,11 @@ export const VerifyOffer = async (req: Request, res: Response, next: NextFunctio
                     return res.status(200).json({ message: 'Offer is Valid', offer: appliedOffer })
                 }
             }
+            throw new NotFoundError('Applied offer not found', 'Customer/VerifyOffer')
         }
-        return res.status(400).json({ msg: 'Offer is Not Valid' })
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Internal Server Error' })
+        throw new BadRequestError('Invalid Customer', 'Customer/VerifyOffer')
+    } catch (err) {
+        next(err)
     }
 }
 
@@ -437,58 +425,67 @@ export const VerifyOffer = async (req: Request, res: Response, next: NextFunctio
 export const CreatePayment = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const customer = req.User
-        const { amount, paymentMode, offerId } = req.body
-        let payableAmount = Number(amount)
-        if (offerId) {
-            const appliedOffer = await Offer.findById(offerId).populate('vendors')
-            console.log(appliedOffer)
-            if (appliedOffer.isActive) {
-                payableAmount = (payableAmount - appliedOffer.offerAmount)
+        if (customer) {
+            const { amount, paymentMode, offerId } = req.body
+            let payableAmount = Number(amount)
+            if (offerId) {
+                const appliedOffer = await Offer.findById(offerId).populate('vendors')
+                if (appliedOffer.isActive) {
+                    payableAmount = (payableAmount - appliedOffer.offerAmount)
+                }
             }
-        }
-        // perform payment gateway charge api
+            // perform payment gateway charge api
 
-        // create record on transaction
-        const transaction = await Transaction.create({
-            customer: customer._id,
-            vendorId: '',
-            orderId: '',
-            orderValue: payableAmount,
-            offerUsed: offerId || 'NA',
-            status: 'OPEN',
-            paymentMode: paymentMode,
-            paymentResponse: 'Payment is cash on Delivery'
-        })
-        //return transaction
-        return res.status(200).json(transaction)
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({ message: 'Internal Server Error' })
+            // create record on transaction
+            const transaction = await Transaction.create({
+                customer: customer._id,
+                vendorId: '',
+                orderId: '',
+                orderValue: payableAmount,
+                offerUsed: offerId || 'NA',
+                status: 'OPEN',
+                paymentMode: paymentMode,
+                paymentResponse: 'Payment is cash on Delivery'
+            })
+            //return transaction
+            if (transaction) {
+                return res.status(200).json(transaction)
+            }
+            throw new CustomError('Error creating transaction', 'Customer/CreatePayment')
+        }
+        throw new BadRequestError('Invalid Customer', 'Customer/CreatePayment')
+    } catch (err) {
+        next(err)
     }
 }
 
 const assignOrderForDelivery = async (orderId: string, vendorId: string) => {
     try {
         // find the vendor
-        const vendor = await Vendor.findById(vendorId);
+        const vendor = await Vendor.findById(vendorId)
         if (vendor) {
-            const areaCode = vendor.pincode;
-            const vendorLat = vendor.lat;
-            const vendorLng = vendor.lng;
+            const areaCode = vendor.pincode
+            const vendorLat = vendor.lat
+            const vendorLng = vendor.lng
             //find the available Delivery person
-            const deliveryPerson = await DeliveryUser.find({ pincode: areaCode, verified: true, isAvailable: true });
+            const deliveryPerson = await DeliveryUser.find({ pincode: areaCode, verified: true, isAvailable: true })
             if (deliveryPerson) {
                 // Check the nearest delivery person and assign the order
-                const currentOrder = await Order.findById(orderId);
+                const currentOrder = await Order.findById(orderId)
                 if (currentOrder) {
                     //update Delivery ID
-                    currentOrder.deliveryId = deliveryPerson[0]._id;
-                    await currentOrder.save();
+                    currentOrder.deliveryId = deliveryPerson[0]._id
+                    await currentOrder.save()
                     //Notify to vendor for received new order firebase push notification
                 }
             }
+            throw new CustomError('Delivery Person not found', 'Customer/assignOrderDelivery')
         }
-    } catch (error) {
-        console.error(error)
+        throw new CustomError('Vendor not found', 'Customer/assignOrderDelivery')
+    } catch (err) {
+        if (err instanceof CustomError) {
+            throw err
+        }
+        throw new Error('An unexpected error occurred')
     }
 }

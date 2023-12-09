@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 import { CreateVendorInput } from "../dto"
 import { DeliveryUser, Transaction, Vendor } from "../models"
 import { generateSalt, hashPassword } from "../utilities"
+import { BadRequestError, NotFoundError, UnauthenticatedError } from "../error"
 
 /* ------------------- Vendor Section --------------------- */
 
@@ -14,7 +15,7 @@ export const findVendor = async (id: string | undefined, email?: string) => {
             return await Vendor.findOne({ _id: id })
         }
     } catch (err) {
-        console.error('Find Vendor Database error:', err)
+        throw new NotFoundError('Error finding vendor in the database', 'Admin/findVendor')
     }
 }
 
@@ -25,32 +26,26 @@ export const CreateVendor = async (req: Request, res: Response, next: NextFuncti
         if (!findOne) {
             const bcryptSalt = await generateSalt()
             const bcryptPassword = await hashPassword(password, bcryptSalt)
-            try {
-                const CreateVendor = await Vendor.create({
-                    name: name,
-                    email: email,
-                    address: address,
-                    foodType: foodType,
-                    ownerName: ownerName,
-                    password: bcryptPassword,
-                    phone: phone,
-                    pincode: pincode,
-                    salt: bcryptSalt,
-                    rating: 0,
-                    serviceAvailable: false,
-                    coverImage: [],
-                })
-                return res.status(201).json({ "success": CreateVendor })
-            } catch (err) {
-                console.error('Database error:', err)
-                res.status(500).json({ message: 'Internal server error' })
-            }
+            const CreateVendor = await Vendor.create({
+                name: name,
+                email: email,
+                address: address,
+                foodType: foodType,
+                ownerName: ownerName,
+                password: bcryptPassword,
+                phone: phone,
+                pincode: pincode,
+                salt: bcryptSalt,
+                rating: 0,
+                serviceAvailable: false,
+                coverImage: [],
+            })
+            return res.status(201).json({ "success": CreateVendor })
         } else {
-            return res.status(403).json({ "Failed": "Already Exists" })
+            throw new BadRequestError('Vendor Already Exists', 'Admin/CreateVendor')
         }
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -60,11 +55,10 @@ export const GetVendors = async (req: Request, res: Response, next: NextFunction
         if (allVendors.length > 0) {
             return res.status(200).json(allVendors)
         } else {
-            return res.status(204).json({ success: "No Vendor Found" })
+            throw new NotFoundError('Error finding vendor in the database', 'Admin/findVendor')
         }
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -77,14 +71,11 @@ export const GetVendorById = async (req: Request, res: Response, next: NextFunct
             if (vendor) {
                 return res.status(200).json(vendor)
             }
-            return res.status(204).json({ Failed: 'Vendor not Found' })
-        } else {
-            // It's not a valid ObjectID, return an error response.
-            return res.status(403).json({ Error: 'Invalid vendor ID' })
+            throw new NotFoundError('Vendor not found', 'Admin/GetVendorById')
         }
+        throw new BadRequestError('Invalid vendor ID', 'Admin/GetVendorById')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -96,10 +87,9 @@ export const GetTransactions = async (req: Request, res: Response, next: NextFun
         if (transactions) {
             return res.status(200).json(transactions)
         }
-        return res.json({ "message": "Transactions data not available" })
+        throw new NotFoundError('Transaction not found', 'Admin/GetTransactions')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -111,10 +101,9 @@ export const GetTransactionById = async (req: Request, res: Response, next: Next
         if (transaction) {
             return res.status(200).json(transaction)
         }
-        return res.json({ "message": "Transaction data not available" })
+        throw new NotFoundError('Transaction not found', 'Admin/GetTransactionById')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -131,10 +120,9 @@ export const VerifyDeliveryUser = async (req: Request, res: Response, next: Next
                 return res.status(200).json(result)
             }
         }
-        return res.json({ message: 'Unable to verify Delivery User' })
+        throw new BadRequestError('Unable to verify Delivery User', 'Admin/VerifyDeliveryUser')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
 
@@ -145,9 +133,8 @@ export const GetDeliveryUsers = async (req: Request, res: Response, next: NextFu
         if (deliveryUsers) {
             return res.status(200).json(deliveryUsers)
         }
-        return res.json({ message: 'Unable to get Delivery Users' })
+        throw new BadRequestError('Unable to get Delivery Users','Admin/GetDeliveryUsers')
     } catch (err) {
-        console.error('Database error:', err)
-        res.status(500).json({ message: 'Internal server error' })
+        next(err)
     }
 }
