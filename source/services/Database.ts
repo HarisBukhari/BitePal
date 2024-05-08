@@ -1,5 +1,4 @@
 import mongoose from "mongoose"
-import { mongoDB_URI } from "../config/index"
 
 const options = {
     useNewUrlParser: true,
@@ -8,7 +7,7 @@ const options = {
 
 export default async () => {
     try {
-        await mongoose.connect(mongoDB_URI, options as any)
+        await mongoose.connect(process.env.mongoDB_URI, options as any)
         console.log('Connected to MongoDB')
     } catch (err) {
         console.error('Error connecting to MongoDB:', err)
