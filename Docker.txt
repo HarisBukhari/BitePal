@@ -1,4 +1,19 @@
-!!!----------After Docker Installation----------!!!
+!!!----------Bulding Docker Image----------!!!
+-> For easy docker file build up
+docker init
+-> For docker image building and starting the container
+docker compose up --build
+-> For Docker push to docker hub
+-> First name it for docker hub
+           The App docker repo          Docker User   Docker Hub repo name
+docker tag online_food_order_app-server harisbukhari/bitepal
+-> Docker push
+docker push harisbukhari/bitepal
+        
+docker tag my-node-app your_username/my-node-app
+
+
+!!!----------For Docker based Redis----------!!!
 -> Install Redis via image by
 docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
 -> Look for Redis image by

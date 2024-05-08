@@ -24,6 +24,8 @@ services:
       - redis_port
     env_file:
       - /.env
+    volumes:
+      - /.env:/app/.env:ro
     ports:
       - ${PORT}:${PORT}
 
