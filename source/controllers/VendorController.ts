@@ -4,6 +4,7 @@ import { findVendor } from "."
 import { generateSign, verifyPassword } from "../utilities"
 import { Food, Offer, Order, Transaction } from "../models"
 import { BadRequestError, CustomError, NotFoundError } from "../error"
+import { get, set } from "../services/Redis"
 
 
 /* ------------------- Vendor Profile Section --------------------- */
@@ -158,9 +159,14 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
             if (vendorProfile) {
                 const foods = await Food.find({ vendorId: vendorProfile.id })
                 if (foods.length > 0) {
-                    res.status(200).json(foods)
+                    const cacheValue = await get('foods')
+                    if (cacheValue) {
+                        return res.status(200).json(JSON.parse(cacheValue))
+                    }
+                    await set('foods', JSON.stringify(foods), 30)
+                    return res.status(200).json(foods)
                 } else {
-                    res.status(404).json({ message: '404 what else you can expect' })
+                    return res.status(404).json({ message: '404 what else you can expect' })
                 }
             }
             throw new CustomError('Something Went Wrong', 'Vendor/getFoods')
