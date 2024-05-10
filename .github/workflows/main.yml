@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies (production)
         run: npm ci --production  # Clearer command for production deps
 
+      - name: Jest Req Files
+        run: npm install --save-dev @babel/preset-typescript @babel/preset-env
+
       - name: Build project
         run: npm run build
 
