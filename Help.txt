@@ -8,3 +8,5 @@ module.exports = {
     '@babel/preset-typescript',
   ],
 };
+
+--> Tsconfig excluding the test cases look for the "exclude": ["**/*.spec.ts"]
