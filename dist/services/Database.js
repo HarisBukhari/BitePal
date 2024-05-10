@@ -13,14 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const index_1 = require("../config/index");
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 };
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield mongoose_1.default.connect(index_1.mongoDB_URI, options);
+        yield mongoose_1.default.connect(process.env.mongoDB_URI, options);
         console.log('Connected to MongoDB');
     }
     catch (err) {

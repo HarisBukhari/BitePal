@@ -23,9 +23,8 @@ const client = new ioredis_1.default({
 function get(key) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log('done');
             const value = yield client.get(key);
-            return value;
+            return JSON.parse(value);
         }
         catch (error) {
             console.error('Error getting value from Redis:', error);
@@ -38,7 +37,8 @@ function set(key, value, expiration) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (expiration) {
-                yield client.set(key, value, 'EX', expiration);
+                yield client.set(key, JSON.stringify(value));
+                yield client.expire(key, expiration);
             }
             else {
                 yield client.set(key, value);

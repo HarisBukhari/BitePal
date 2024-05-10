@@ -174,7 +174,7 @@ const getFoods = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                     if (cacheValue) {
                         return res.status(200).json(JSON.parse(cacheValue));
                     }
-                    yield (0, Redis_1.set)('data', JSON.stringify(foods), 30);
+                    yield (0, Redis_1.set)('foods', JSON.stringify(foods), 30);
                     return res.status(200).json(foods);
                 }
                 else {

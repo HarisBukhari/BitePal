@@ -12,10 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSign = exports.generateSign = exports.verifyPassword = exports.hashPassword = exports.generateSalt = void 0;
+exports.dummyFun = exports.validateSign = exports.generateSign = exports.verifyPassword = exports.hashPassword = exports.generateSalt = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const config_1 = require("../config");
 // const saltRounds = 10 // You can adjust the number of salt rounds as needed.
 //Function to generate salt
 const generateSalt = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -33,14 +32,14 @@ const verifyPassword = (plainPassword, hashedPassword) => __awaiter(void 0, void
 });
 exports.verifyPassword = verifyPassword;
 const generateSign = (payload) => {
-    return jsonwebtoken_1.default.sign(payload, config_1.AppSecret, { expiresIn: '7d' });
+    return jsonwebtoken_1.default.sign(payload, process.env.AppSecret, { expiresIn: '7d' });
 };
 exports.generateSign = generateSign;
 const validateSign = (req) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.get('Authorization');
     if (token) {
         try {
-            const payload = jsonwebtoken_1.default.verify(token.split(' ')[1], config_1.AppSecret);
+            const payload = jsonwebtoken_1.default.verify(token.split(' ')[1], process.env.AppSecret);
             req.User = payload;
             return true;
         }
@@ -52,4 +51,8 @@ const validateSign = (req) => __awaiter(void 0, void 0, void 0, function* () {
     return false;
 });
 exports.validateSign = validateSign;
+const dummyFun = (a, b) => {
+    return a + b;
+};
+exports.dummyFun = dummyFun;
 //# sourceMappingURL=GeneratePassword.js.map

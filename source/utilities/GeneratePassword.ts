@@ -20,7 +20,7 @@ export const verifyPassword = async (plainPassword: string, hashedPassword: stri
     return await bcrypt.compare(plainPassword, hashedPassword)
 }
 
-export const generateSign = (payload: AuthPayload ) => {
+export const generateSign = (payload: AuthPayload) => {
     return jwt.sign(payload, process.env.AppSecret, { expiresIn: '7d' })
 }
 
@@ -28,11 +28,11 @@ export const validateSign = async (req: Request) => {
     const token = req.get('Authorization')
     if (token) {
         try {
-            const payload = jwt.verify(token.split(' ')[1], process.env.AppSecret) as AuthPayload 
+            const payload = jwt.verify(token.split(' ')[1], process.env.AppSecret) as AuthPayload
             req.User = payload
             return true
         } catch (err) {
-            console.log({msg: "[Utilities/GeneratePassword/validateSign] Token Error"})
+            console.log({ msg: "[Utilities/GeneratePassword/validateSign] Token Error" })
             return false
         }
     }
@@ -40,3 +40,6 @@ export const validateSign = async (req: Request) => {
 }
 
 
+export const dummyFun = (a: number, b: number) => {
+    return a + b
+}
