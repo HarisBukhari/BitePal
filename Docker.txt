@@ -3,8 +3,14 @@
 docker init
 -> For docker image building and starting the container
 docker compose up --build
--> For Just to run the build
+docker-compose up -d
+-> For Just to run the build with or without env
 docker run online_food_order_app-server
+docker run --env-file=.env online_food_order_app-server
+    -> with port exposure
+docker run -p 8080:3000 --env-file=.env online_food_order_app-server
+-> To stop 
+docker-compose down
 -> For Docker push to docker hub
 -> First name it for docker hub
            The App docker repo          Docker User   Docker Hub repo name
