@@ -1,0 +1,42 @@
+name: Build, Test, and Push
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # Allows all steps to run even if one fails
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16  # Adjust this version if needed
+
+      - name: Install dependencies (production)
+        run: npm ci --production  # Clearer command for production deps
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build Docker image and tag
+        run: |
+          docker build -t online_food_order_app-server .
+          docker tag online_food_order_app-server harisbukhari/bitepal  # Adjust username and image name
+
+      - name: Login to Docker Hub with access token (optional)
+        if: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Push Docker image (optional)
+        if: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+        run: docker push harisbukhari/bitepal  # Replace with your full repository name
+
