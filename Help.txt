@@ -1,0 +1,10 @@
+--> Jest Testing for typescript
+npm install --save-dev @babel/preset-typescript @babel/preset-env --save-dev
+
+babel.config.env ['-> File for ts jest babel config]
+module.exports = {
+  presets: [
+    ['@babel/preset-env', {targets: {node: 'current'}}],
+    '@babel/preset-typescript',
+  ],
+};
