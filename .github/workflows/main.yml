@@ -18,11 +18,11 @@ jobs:
         with:
           node-version: 16  # Adjust this version if needed
 
-      - name: Install dependencies (production)
-        run: npm ci --production  # Clearer command for production deps
-
       - name: Jest Req Files
         run: npm install --save-dev @babel/preset-typescript @babel/preset-env
+        
+      - name: Install dependencies (production)
+        run: npm ci --production  # Clearer command for production deps
 
       - name: Build project
         run: npm run build
