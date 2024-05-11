@@ -44,7 +44,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 COPY . .
 
 # Run for testing purposes @Z
-RUN npm install --save-dev @babel/preset-typescript @babel/preset-env
+# RUN npm install @babel/preset-typescript @babel/preset-env
 
 # Run the build script.
 RUN npm run build
