@@ -22,7 +22,10 @@ jobs:
         run: npm ci --production  # Clearer command for production deps
 
       - name: Build project
-        run: npm run build
+        run: |
+          npm install --production  # Assuming you don't need dev dependencies during build
+          tsc --outDir dist  # Explicitly call TypeScript compiler
+
 
       - name: Run tests
         run: npm test
