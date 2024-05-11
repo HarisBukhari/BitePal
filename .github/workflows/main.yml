@@ -17,18 +17,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16  # Adjust this version if needed
-
-      - name: Jest Req Files
-        run: npm install @babel/preset-typescript @babel/preset-env
         
-      - name: Install dependencies (production)
-        run: npm ci --production  # Clearer command for production deps
-
-      - name: Build project
-        run: npm run build
-
-      - name: Run tests
-        run: npm test
+      - name: Install dependencies and Build project(production) include Postinstall (npm run build)
+        run: npm install
 
       - name: Build Docker image and tag
         run: |

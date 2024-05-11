@@ -1,3 +1,5 @@
+-> Postinstall trigger after npm install
+
 --> Jest Testing for typescript
 npm install --save-dev @babel/preset-typescript @babel/preset-env --save-dev
 
