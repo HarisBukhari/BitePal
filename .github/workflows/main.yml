@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: 16  # Adjust this version if needed
 
+      - name: Jest Req Files
+        run: npm install @babel/preset-typescript @babel/preset-env
+        
       - name: Install dependencies (production)
         run: npm ci --production  # Clearer command for production deps
 
@@ -33,10 +36,8 @@ jobs:
           docker tag online_food_order_app-server harisbukhari/bitepal  # Adjust username and image name
 
       - name: Login to Docker Hub with access token (optional)
-        if: ${{ secrets.DOCKER_ACCESS_TOKEN }}
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Push Docker image (optional)
-        if: ${{ secrets.DOCKER_ACCESS_TOKEN }}
         run: docker push harisbukhari/bitepal  # Replace with your full repository name
 
