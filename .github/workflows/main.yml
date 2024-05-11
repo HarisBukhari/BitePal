@@ -19,13 +19,10 @@ jobs:
           node-version: 16  # Adjust this version if needed
         
       - name: Install dependencies (production)
-        run: npm ci --production  # Clearer command for production deps
+        run: npm install
 
       - name: Build project
-        run: |
-          npm install --production  # Assuming you don't need dev dependencies during build
-          tsc --outDir dist  # Explicitly call TypeScript compiler
-
+        run: npm run build
 
       - name: Run tests
         run: npm test
