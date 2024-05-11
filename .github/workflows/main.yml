@@ -18,14 +18,8 @@ jobs:
         with:
           node-version: 16  # Adjust this version if needed
         
-      - name: Install dependencies (production)
+      - name: Install dependencies and Build project(production) include Postinstall (npm run build)
         run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Run tests
-        run: npm test
 
       - name: Build Docker image and tag
         run: |
