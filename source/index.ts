@@ -11,6 +11,7 @@ const StartServer = async () => {
         await dbConnection()
         console.log(`Server is running on port ${process.env.PORT||3000}`)
     })
+    return app
 }
 
 StartServer()

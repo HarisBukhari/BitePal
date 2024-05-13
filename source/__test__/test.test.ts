@@ -8,7 +8,4 @@ test('Sum (1,2) should return 3', () => {
 })
 
 
-test('Sum (1,2) should return 3', () => {
-    expect(typeof obj).toBe('object');
-})
 

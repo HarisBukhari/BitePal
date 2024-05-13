@@ -1,0 +1,22 @@
+Files
+bable.config.js
+module.exports = {
+    presets: [
+      ['@babel/preset-env', {targets: {node: 'current'}}],
+      '@babel/preset-typescript',
+    ],
+  };module.exports = {
+    presets: [
+      ['@babel/preset-env', {targets: {node: 'current'}}],
+      '@babel/preset-typescript',
+    ],
+};
+
+package.json
+    "scripts": {
+    "test": "jest",
+    "dev": "nodemon source/index.ts",
+    "start": "node dist/index.js",
+    "build": "jest && tsc -p .",
+    "postinstall": "npm run build"
+  }
