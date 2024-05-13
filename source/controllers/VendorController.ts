@@ -38,11 +38,10 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 export const getVendor = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const vendor = req.User
-        console.log(vendor)
         if (vendor) {
             const vendorProfile = await (findVendor(vendor._id, ""))
             if (vendorProfile) {
-                res.status(200).json(vendorProfile)
+                return res.status(200).json(vendorProfile)
             }
             throw new CustomError('Something Went Wrong', 'Vendor/getVendor')
         }

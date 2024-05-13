@@ -1,16 +1,8 @@
-import express from "express"
-import App from '../services/ExpressApp'
+Jest testing is getting issue while completing the testing because Redis instance is not closing the connection on jest testing
+[
 import { Redis } from 'ioredis';
 import { client } from "../services/Redis";
-
-
-const StartServer = async () => {
-    const app = express()
-    await App(app)
-    return app
-}
-
-export const app = StartServer()
+// client as export with project credentionals 
 
 export async function shutdown() {
     async function closeRedisConnection(client: Redis): Promise<void> {
@@ -26,7 +18,6 @@ export async function shutdown() {
             client.once('end', () => resolve());
         });
     }
-
     (async () => {
         try {
             await closeRedisConnection(client);
@@ -36,3 +27,4 @@ export async function shutdown() {
         }
     })();
 }
+]

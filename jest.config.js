@@ -6,4 +6,6 @@ module.exports = {
     verbose: true,
     forceExit: true,
     // clearMogks: true,
+    testTimeout: 10000, // Adjust timeout as needed
+    openHandlesTimeout: 5000,
 }

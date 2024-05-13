@@ -1,14 +1,17 @@
 import Redis from "ioredis"
 
-const client = new Redis({
-    password: process.env.redis_password,
-    host: process.env.redis_host,
-    port: parseInt(process.env.redis_port)
-  })
+export const client = new Redis({
+  password: process.env.redis_password,
+  host: process.env.redis_host,
+  port: parseInt(process.env.redis_port)
+})
 
 
+export async function cnt() {
+  await client.connect()
+}
 // Utility functions for Redis operations
-export async function get( key: string) {
+export async function get(key: string) {
   try {
     const value = await client.get(key)
     return JSON.parse(value)
@@ -21,8 +24,8 @@ export async function get( key: string) {
 export async function set(key: string, value: string, expiration?: number) {
   try {
     if (expiration) {
-        await client.set(key, JSON.stringify(value))
-        await client.expire(key, expiration)
+      await client.set(key, JSON.stringify(value))
+      await client.expire(key, expiration)
     } else {
       await client.set(key, value)
     }
@@ -33,7 +36,7 @@ export async function set(key: string, value: string, expiration?: number) {
   }
 }
 
-export async function del(key: string){
+export async function del(key: string) {
   try {
     const deleted = await client.del(key)
     return deleted // Number of keys deleted (usually 1)
@@ -43,3 +46,6 @@ export async function del(key: string){
   }
 }
 
+export async function closeC() {
+  await client.quit()
+}

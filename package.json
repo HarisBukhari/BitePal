@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "dev": "nodemon source/index.ts",
     "test_dev": "jest && npm run dev",
     "start": "node dist/index.js",
@@ -17,6 +17,7 @@
   "author": "Jayant Gogoi",
   "license": "ISC",
   "dependencies": {
+    "@types/redis": "^4.0.11",
     "bcrypt": "^5.0.0",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.14.0",
@@ -30,6 +31,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^5.10.13",
     "multer": "^1.4.2",
+    "redis": "^4.6.13",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.1",
     "twilio": "^3.40.0",
