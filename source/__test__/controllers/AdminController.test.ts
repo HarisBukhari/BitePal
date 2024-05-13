@@ -1,18 +1,19 @@
-import supertest from "supertest";
-import { app, shutdown } from "../app";
+import supertest from "supertest"
+import { shutdown } from "../app"
+import { app } from "../../index.ts"
 
 //IMP
 //This function is called because the redis connection is not closed after Jest testing
 shutdown()
 
 describe('admin route', () => {
-
-
     describe('get vendors route', () => {
         describe('given the vendors does not exist', () => {
-            it('should return a 404', async () => {
-                await supertest(await app).get('/vendors').expect(200); // Expect a 404 here
-            });
-        });
-    });
-});
+            it('should return a 200', async () => {
+                const { body, statusCode } = await supertest(app).get('/vendor')
+                console.log(body)
+                expect(statusCode).toBe(200)
+            })
+        })
+    })
+})

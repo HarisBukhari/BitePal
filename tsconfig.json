@@ -13,6 +13,8 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true, 
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "exclude": [
     "**/__tests__/**/*.+(ts|js)",
