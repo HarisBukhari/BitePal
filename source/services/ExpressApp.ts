@@ -8,8 +8,7 @@ import rateLimiter from "express-rate-limit"
 import {html} from "../utilities"
 import { ErrorHandler, errorHandlerMiddleware } from "../middlewares"
 
-export default async (app: Application) => {
-
+    export const app = express()
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
     app.set('trust proxy', 1)
@@ -39,4 +38,4 @@ export default async (app: Application) => {
         const postmanDocURL = 'https://documenter.getpostman.com/view/22277285/2s9YeN2U1H'
         res.send(html)
     })
-}
+

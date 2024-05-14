@@ -1,6 +1,6 @@
 import supertest from "supertest"
 import { shutdown } from "../app"
-import { app } from "../../index.ts"
+import { app } from "../../services/ExpressApp"
 
 //IMP
 //This function is called because the redis connection is not closed after Jest testing
