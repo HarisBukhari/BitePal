@@ -15,7 +15,7 @@
       "forceConsistentCasingInFileNames": true
     },
     "exclude": [
-      "**/__tests__/**/*.+(ts|js)",
+      "**/__test__/**/*.+(ts|js)",
       "**/*.test.ts", // Exclude all files ending with .test.ts
       "**/*.spec.ts"  // Exclude all files ending with .spec.ts (optional, for additional test file naming conventions)
     ]
