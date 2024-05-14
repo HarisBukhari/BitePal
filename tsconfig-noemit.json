@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+      "target": "es2016",                        
+      "module": "commonjs",
+      "lib": ["DOM", "ES6", "ESNext.AsyncIterable"],
+      "typeRoots": [ "./source/types","./node_modules/@types"], 
+      "sourceMap": true,
+      "outDir": "./dist",
+      "rootDir": "./source",
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "strictPropertyInitialization": false,
+      "forceConsistentCasingInFileNames": true
+    },
+    "exclude": [
+      "**/__tests__/**/*.+(ts|js)",
+      "**/*.test.ts", // Exclude all files ending with .test.ts
+      "**/*.spec.ts"  // Exclude all files ending with .spec.ts (optional, for additional test file naming conventions)
+    ]
+  }

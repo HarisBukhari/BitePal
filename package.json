@@ -8,7 +8,7 @@
     "dev": "nodemon source/index.ts",
     "test_dev": "jest && npm run dev",
     "start": "node dist/index.js",
-    "build": "tsc -p ."
+    "build": "tsc -p . && tsc -p tsconfig-noemit.json"
   },
   "engines": {
     "node": "14.15.2",
