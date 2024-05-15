@@ -165,7 +165,7 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
                     await set('foods', JSON.stringify(foods), 30)
                     return res.status(200).json(foods)
                 } else {
-                    return res.status(404).json({ message: '404 what else you can expect' })
+                    return res.status(200).json({ message: 'Vendor has no food' })
                 }
             }
             throw new CustomError('Something Went Wrong', 'Vendor/getFoods')
